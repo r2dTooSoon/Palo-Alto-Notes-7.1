@@ -190,10 +190,26 @@ Application groups are manually configured to include
         \item applications filters
         \item other applications groups
     \end{itemize}
+    
 \subsection{Application Identification and Classification}
 \subsubsection{Identify Unknown Traffic, Unclassified Traffic}
+\subparagraph{Known-good-rule} Allows those necessary apps through the firewall, therefore safely enabling these apps as per the company policy.
+
+\subparagraph{Known-bad-rule} Blocks or denies those identified app of which are not permitted per company policy.
+
+\subparagraph{Unclassified-Traffic-Rule} Will enable the admin to determine which other app are encountering the firewall by matching traffic that is not caught by the first two rules.
+
+\subparagraph{Deny} If the last rule is set with \textit{deny}, in the event of an incoming TCP connection attempt, the firewall would classify the app as \textit{unknown} and block the connection.
+
 \subsubsection{Newly Classified Traffic:  Content Updates}
+PAN-0S 7.0 allows for a review of the newly classified information.
+
 \subsubsection{Newly Classified Traffic:  Content Updates (Cont)}
+Before making a decision, you can review your current Security policy rules that may be impacted by these newly classified apps by clicking \textbf{Review Policies}
+
 \subsubsection{Newly Classified Traffic:  Content Updates (Cont)}
+You also may automatically disable new applications if the system is configured to Download and Install.
+
 \subsubsection{Newly Classified Traffic:  Content Updates (Cont)}
+If you choose to disable newly classified apps whether, automatically, or manually, you also disable all of its dependent applications, which may be something you don't want to do.
 
