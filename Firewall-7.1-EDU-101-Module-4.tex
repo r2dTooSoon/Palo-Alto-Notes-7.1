@@ -1,0 +1,248 @@
+\section{Security Zones}
+\subsection{Security Zones}
+A \textbf{zone} is a grouping of interfaces (physical or virtual) that represents a segment of your network that is connected to, and controlled by, the firewall.
+
+\subsection{Security Zones Within a Policy Rule}
+Policy rules are configured by zones not interface.
+
+\subsection{Three Types of Security Policy Rules}
+    \begin{itemize}
+        \item Intrazone:  Applies the rule to all matching traffic within the specified source zones(you cannot specify a destination zone for intrazone rules.
+        \item Interzone:  Applies the rule to all matching traffic between the specified source and destination zones.
+        \item Applies the rule to all matching interzone and intrazone traffic in the specified source and destination zones.
+    \end{itemize}
+
+\subsection{Predefined Default Security Rules}
+    \begin{itemize}
+        \item intrazone-default:  Default action is to allow all traffic within the same zone.
+        \item interzone-default:  Default action is to deny all traffic attempting to traverse between different zones. This eliminates the need to create a \textit{catch-all} rule.
+    \end{itemize}
+
+\subsection{Rule Type Example:  Universal (the Default)}
+\textit{Broken slide}
+
+\subsection{Rule Type Example:  Intrazone}
+Matches traffic that flow from Zone A to Zone A and traffic that flows from Zone B to Zone B.
+
+\subsection{Rule Type Example:  Interzone (con't)}
+Interzone rule by default is a deny but can be configured such that traffic can flow from Zone A to Zone B and vice versa.
+
+\subsection{Enable Intrazone and Interzone Logging}
+Logging is not enabled by default. 
+
+\subsection{Security Policy Administration}
+Traffic that doesn't match any rules will fall to the default rules.
+Rules are evaluated left to right and top to bottom.
+More specific to more general
+
+\subsection{Creating Security Policy Rules}
+\subsubsection{General Tab}
+    \begin{itemize}
+        \item Name: Required
+        \item Rule Type: Intra, Inter, Universal
+        \item Name: Specify name for rule
+        \item Tags: Optional
+    \end{itemize}
+    
+\subsubsection{Source Tab}
+    \begin{itemize}
+        \item Source Zone: Required field
+        \item Source Address:
+            \begin{itemize}
+                \item Any is the default
+                \item May specify
+                    \begin{itemize}
+                        \item Address
+                        \item Address group
+                        \item region
+                    \end{itemize}
+            \end{itemize}
+    \end{itemize}
+
+\subsubsection{User Tab}
+    \begin{itemize}
+        \item Source User:
+            \begin{itemize}
+                \item \textbf{Any}: Includes any traffic regardless of user data
+                \item \textbf{Pre-logon}:  Includes remote users that are connected to the network using GloablProtect, but are not logged into their system. When the Pre-logon option is configured on the portal for GlobalProtect clients, any users who are not currently logged in to their machine will be identified with the username pre-logon. You can then create policies for pre-logon users and, although the users are not logged in directly, their machines are authenticated on the domain as if they were fully logged in.
+                \item \textbf{known-user}:  Includes all authenticated users, which means any IP with user data mapped. This option is equivalent to the domain users group on a domain.
+                \item \textbf{unknown}:  Includes all unauthenticated users, which means IP addresses that are not mapped to a user.
+                \item \textbf{Select}:  Includes selected users as determined by the selection in this window.
+            \end{itemize}
+        \item HIP Profiles (Host Information Profile): Any is the default but you may use source host information profiles to identify specifice users. AHIP enables you to collect information about the security status of your end hosts, such as whether they have the latest security patches and av defs installed.  Use of host information profiles for policy enforcement enables granular security that ensures that the remote hosts accessing our critical resources are adequately maintained and in adherence with your security standards before they are allowed access to  your network resources.
+    \end{itemize}
+\subsubsection{Destination Tab}
+    \begin{itemize}
+        \item \textbf{Destination Zone}:  Required field, 
+        \item \textbf{Destination Address}:
+            \begin{itemize}
+                \item Any is the default
+                \item May specify
+                    \begin{itemize}
+                        \item Address
+                        \item Address Group
+                        \item Region
+                    \end{itemize}
+            \end{itemize}
+    \end{itemize}
+
+\subsubsection{Application Tab}
+Select the specific applications for the security rule.
+    \begin{itemize}
+        \item Any is the default
+        \item Specify a single application or multiple application
+        \item May include custom applications
+    \end{itemize}
+    
+\subsubsection{Service/URL Category Tab}
+Select services to limit to specific TCP and/or UDP port numbers;
+    \begin{itemize}
+        \item \textbf{Any}:  The selected applications are allowed or denied on any protocol or port.
+        \item \textbf{application-default}: The selected applications are allowed or denied only on their default ports as defined by Palo Alto Networks. This option is recommended for allow policies b/c it prevents applications from running on unusual ports and protocols that if not 
+        \item \textbf{Select}: Click \textit{Add}. Choose an existing service or choose \textit{Service} or \textit{Service Group} to create a new Service or a new Service Group
+    \end{itemize}
+\textbf{URL Category} match criteria are used in three different policy types
+    \begin{itemize}
+        \item Security
+        \item QoS
+        \item Captive Portal
+    \end{itemize}
+    
+\subsubsection{Action Settings}
+    \begin{itemize}
+        \item \textbf{Allow}:  Default action
+        \item \textbf{Deny}:  Drops packet or resets TCP, depending on the application
+        \item \textbf{Drop}:  Silently drops
+        \item \textbf{Reset client}:  Sends TCP RST to client
+        \item \textbf{Reset server}:  Sends TCP RST to server
+        \item \textbf{Reset both client and server}:  Sends TCP RST to both the client and server
+    \end{itemize}
+\subsection{Security Policy Administration}
+\subsubsection{Security Policy Rule Match Conditions}
+A security policy is created, it will consist of a list of rules. Rules can be as specific as required. They are built using objects that hold values of addresses applications, users, and services. The configured action, including \textit{deny} and \textit{allow}, is taken only if a session matches all defined fields of the Security Policy rule. 
+
+\subsubsection{Display Additional Field Columns}
+You can customize the columns shown to limit the amount of information displayed
+
+\subsubsection{Security Policy}
+    \begin{itemize}
+        \item Security policies are evaluated in the order they are listed in the firewall
+        \item Traffic is compared against each rule of the list in descending order, beginning with the top rule.
+        \item If the rule does not match, the next subsequent rule is checked.
+        \item When there is a traffic policy rule match, no further rules are evaluated.
+    \end{itemize}
+    
+\subsubsection{Arranging the Policy Rule Set Order}
+You can order the rule listing in multiple ways to ease management.
+
+\subsubsection{Managing Security Policy Rules}
+Rule order is important.
+
+\subsection{Security Policy Administration (con't)}
+\subsubsection{Global Find}
+    \begin{itemize}
+        \item A user is looking to see where a given address object is used throughout the configuration, including policies, interfaces, and address groups.
+        \item A user wants to find all objects with a given tag.
+        \item A user wants to see where a given IP address is used in the configuration including address objects, dynamic objects, literals in policies, and network configuration.
+        \item A user wants to find a policy that includes a username or user group.
+        \item A user wants to find out if an application is used in a policy, application group, application filter, report query, etc.
+    \end{itemize}
+\subsubsection{Global Find in Context}
+\textit{Any} across all policies, yielding results throughout the various types of rules and profiles configured on the firewall.
+
+\subsubsection{Highlight Unused Security Policy Rules}
+Allows an admin to see which rules have not matched any traffic since the last reboot of the firewall. This option often is used to troubleshoot misconfigured policies. You also should check your unused rules every three to six months to help maintain firewall efficiency.
+
+\subsubsection{Traffic Logs}
+Default is set to log at the end of a session. \textbf{Monitor} $\rightarrow$ \textbf{Logs} $\rightarrow$ \textbf{Traffic}.
+    \begin{itemize}
+        \item Date and time
+        \item Source and destination zones
+        \item Addresses
+        \item Ports
+        \item Application name
+        \item Security rule name applied to the flow
+        \item Rule action
+            \begin{itemize}
+                \item allow
+                \item deny
+                \item drop
+            \end{itemize}
+        \item Ingress and egress interface
+        \item Number of bytes
+    \end{itemize}    
+
+\section{Network Address Translation}
+\subsection{Network Address Translation}
+\subsubsection{Introduction}
+Two families
+    \begin{itemize}
+        \item Source NAT:  commonly used for internal users to access the internet
+        \item Destination NAT: used to provide external access to public servers on the private network.
+    \end{itemize}
+
+\subsubsection{Source NAT Types}
+    \begin{itemize}
+        \item \textbf{Static IP}:
+            \begin{itemize}
+                \item 1-to-1 fixed translations
+                \item Change the source IP address while leaving the source port unchanged
+            \end{itemize}
+        \item \textbf{Dynamic IP}:
+            \begin{itemize}
+                \item 1-to-1 translations of a source IP address only (no port number)
+                \item Private source address translates to thenext available address in the range.
+            \end{itemize}
+        \item \textbf{Dynamic IP and port (DIPP)}:
+            \begin{itemize}
+                \item Multiple clients use the same public IP addresses with different source port numbers
+                \item The assigned address can be set to the interface address or to a translated address.
+            \end{itemize}
+    \end{itemize}
+
+\subsubsection{DIPP NAT Oversubscription}
+The same translated IP address and port pair can be used multiple times in concurrent sessions. \textit{Assumes that host are connecting to different destination} Concurrent sessions = oversubscription rate (8/4/2) x address pool size.
+
+\subsubsection{Configuring Source NAT}
+Translation types are as follows:
+    \begin{itemize}
+        \item \textbf{Dynamic IP and Port}:  For a given source IP address, the firewall uses the same translated source address for all sessions. Dynamic IP and Port source NAT supports about 64,000 concurrent session on each IP address in the NAT pool.
+        \item \textbf{Dynamic IP}:  The next available address in the specified range is used, but the port number is unchanged. Click the \textit{Advanced (Dynamic IP/Port Failback) button (in the Translated Packet tab when you choose Dynamic IP) to use dynamic IP and port if the pool is exhausted.}
+        \item \textbf{Static IP}: The same address is always used, and the port is unchanged.
+    \end{itemize}
+The two address types are as follows:
+    \begin{itemize}
+        \item \textbf{Translated Address}:  Use a new address that is not on an external interface.
+        \item \textbf{Interface Address}:  Use an existing address that is on an external interface.
+    \end{itemize}
+\subsubsection{Source NAT}
+Use NAT policies to specify whether source or destination IP addresses and ports are converted between public and private addresses and ports.
+When you configure NAT on the firewall, you must also configure a security policy to allow the NAT traffic. The security policy is matched based on the post-NAT zone and the pre-NAT IP address.
+\subsubsection{Source NAT (con't)}
+Source addresses can be translated to either an IP address or address range in either a dynamic or static address pool.
+    \begin{itemize}
+        \item \textbf{Dynamic IP and Port}:  Up to 64K concurrent sessions are translated to the same public IP address, each with a different port number (1025 to 65535). Up to 254 consecutive IP addresses are supported. Port numbers are managed internally.
+        \item \textbf{Dynamic IP}:  Source range is 192.168.0.1 to 192.168.0.10 and the translation range is 100.0.0.1 to 100.0.0.10, address 192.168.0.2 is always translated to 100.0.0.2. The address range is virtually unlimited. Up to 32K IP addresses are supported in the pool.
+        \item \textbf{Static IP}: The same address is always used and the port is unchanged.
+    \end{itemize}
+If the Translation Type field is set to none, no translation is done. This option is sometimes referred to as "NO-NAT" policy.
+
+\subsubsection{Source NAT Example}
+192.168.15.47 $\Rightarrow$ e1/1 192.168.15.1 $\Rightarrow$ e1/4 198.51.100.22 $\Rightarrow$ 4.2.2.2
+
+\subsubsection{Flow Logic of the Next-Generation Firewall}
+The key to understanding how to configure NAT rules is learning the flow logic of how NAT is processed in the firewall. The configuration is more logical if you know when the NAT rules are evaluated versus applied.
+
+\subsubsection{Destination NAT Example}
+65.124.57.5 $\Rightarrow$ 20.101.16.39 $\Rightarrow$ 192.168.15.1 $\Rightarrow$ 192.168.15.47
+
+\subsubsection{Destination NAT Example Policies}
+NAT rules must be configured to use the zones associated with pre-NAT IP addresses configured in the policy. A security policy differs from the NAT polic in that post-NAT zones must be used to control traffic.
+
+\subsubsection{Destination NAT Port Mapping Configuration}
+Destination NAT types are as follows:
+    \begin{itemize}
+        \item \textbf{Static IP}:  For inbound traffic, 1-to-1 translation. Use static IP to change the destination IP address while leaving the destination port unchanged.
+        \item \textbf{Port Forwarding}:  Used to map a single public IP address to multiple private servers and services. Destination ports can stay the same or can be directed to different destination ports.
+    \end{itemize}
+\subparagraph{Configuring the Destination NAT} Enter an IP address or range of IP addresses and a translated port number (1 to 65535) that the destination address and port number are translated to. If the Translated Port field is blank, the destination port is not changed. Destination translation typically is used to allow an internal server, such as an email server, to be accessed from the public network.

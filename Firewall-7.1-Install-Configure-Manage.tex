@@ -1,0 +1,555 @@
+%\documentclass{article}
+%\usepackage[utf8]{inputenc}
+
+%\title{Firewall 7.1: Install, Configure, and Manage}
+%\author{das0}
+%\date{October 2018}
+
+%\begin{document}
+
+\maketitle
+
+\section{Platforms and Architecture}
+\begin{itemize}
+    \item Next-Gen Security Platform
+        \begin{itemize}
+            \item AutoFocus - Hosted service, Intelligence Cloud
+            \item Aperture - Protects/Scans Dropbox et al.
+            \item Traps - Prevent endpoint atacks from exe, data files, etc
+        \end{itemize}
+    \item Development of Unified Threat Management
+        \begin{itemize}
+            \item All-in-One - AV, URL Filter Appliance, Firewall, and IDS/IPS
+        \end{itemize}
+    \item Serial Processing in the UTM
+        \begin{itemize}
+            \item Needed new way to process data to reduce latency
+        \end{itemize}
+    \item Palo Alto Network Single-Pass Architecture
+        \begin{itemize}
+            \item Allows specific security policies based on identification of applications
+            \item Uses packet inspection and library of application signatures
+        \end{itemize}
+    \item Palo Alto Network Firewall Architecture
+        \begin{itemize}
+            \item Control Plane
+            \item Data Plane
+        \end{itemize}
+    \item Flow logic of the Next Gen Firewall
+        \begin{itemize}
+            \item Ingress
+            \item Egress
+        \end{itemize}
+\end{itemize}
+
+
+\section{Initial Configuration}
+
+\subsection{Initial Access to the System}
+    \begin{itemize}
+        \item Configuring the Static MGT
+            \begin{itemize}
+                \item Connect via CLI; then set stat IP and commit
+            \end{itemize}
+        \item MGT Interface Stat Address Using WebUI
+            \begin{itemize}
+                \item 192.168.1.1
+            \end{itemize}
+        \item MGT Interface Dynamic Address
+            \begin{itemize}
+                \item Cloud/Multi-Tenant - DHCP
+                \item IP often comes from a cloud orchestrator 
+            \end{itemize}
+    \end{itemize}
+
+\subsection{Configuration Overview}
+    \begin{itemize}
+        \item Configure DNS and NTP SErvers
+            \begin{itemize}
+                \item Setup $\rightarrow$ Services
+            \end{itemize}
+        \item Configure Hostname and Domain
+            \begin{itemize}
+                \item General Settings
+            \end{itemize}
+        \item Banners and Messages
+            \begin{itemize}
+                \item Device $\rightarrow$ Setup $\rightarrow$ Management $\rightarrow$ Banners and Messages
+            \end{itemize}
+    \end{itemize}
+
+\subsection{Configuration Management}
+\subsubsection{Configuration Management}    
+    \begin{itemize}
+        \item Configuration Types
+            \begin{itemize}
+                \item After making changes click 'OK' and that becomes the Candidate; Click Commit to apply it to the configuration
+                \item Logs = Monitor $\rightarrow$ Logs $\rightarrow$ Configuration
+            \end{itemize}
+        \item Commit Operation
+            \begin{itemize}
+                \item Device and Network
+                \item Policy and Object
+                \item Preview Changes
+            \end{itemize}
+        \item Transaction Locks
+            \begin{itemize}
+                \item Configuration Locks
+                \item Commit Locks
+            \end{itemize}
+        \item Automatically Acquire Commit Lock
+            \begin{itemize}
+                \item Device $\rightarrow$ Setup for checkbox
+            \end{itemize}
+        \item Commit Queuing
+            \begin{itemize}
+                \item Commits must be executed one at a time
+            \end{itemize}
+        \item Configuration Management
+            \begin{itemize}
+                \item Save and rollback: Device $\rightarrow$ Setup $\rightarrow$ Operations
+            \end{itemize}
+        \item Configuration Management Auditing
+            \begin{itemize}
+                \item Shows changes in Red, Yellow, Green 
+            \end{itemize}
+    \end{itemize}
+
+\subsection{Licensing and Software Updates}
+\subsubsection{Licensing and Software Updates}
+    \begin{itemize}
+        \item Activate the firewall
+            \begin{itemize}
+                \item Serial Number required
+            \end{itemize}
+        \item Activate VM-Series
+            \begin{itemize}
+                \item Email authorization codes
+            \end{itemize}
+        \item Licensing
+            \begin{itemize}
+                \item Feature licensed separately
+                \item Device $\rightarrow$ License
+            \end{itemize}
+        \item Dynamic Updates
+            \begin{itemize}
+                \item AV - daily
+                \item Application and Threats - weekly
+                \item BrightCloud URL Filter - daily
+            \end{itemize}
+        \item PAN-OS Software
+            \begin{itemize}
+                \item Check-now; Check release notes before implementation
+            \end{itemize}
+        \item Rapid Mass Deployment
+            \begin{itemize}
+                \item Bootstrap from USB
+            \end{itemize}
+        \item Power Operations
+            \begin{itemize}
+                \item Device $\rightarrow$ Setup $\rightarrow$ Operations
+            \end{itemize}
+    \end{itemize}
+
+\subsection{Account Administration}
+\subsubsection{Account Administration}
+    \begin{itemize}
+        \item Account Administration
+            \begin{itemize}
+                \item Initially only predefined admin has access
+                \item User accounts can be tailored
+            \end{itemize}
+        \item Administrator Roles
+            \begin{itemize}
+                \item Defines role profiles
+                \item CLI user rights defined by built-in roles
+                    \begin{itemize}
+                        \item None
+                        \item Superuser
+                        \item Superreader
+                        \item deviceadmin
+                        \item devicereader
+                        \item vsysadmin
+                        \item vsysreader
+                    \end{itemize}
+            \end{itemize}
+        \item Using External AAA to Authenticate Admin Users
+            \begin{itemize}
+                \item Need server profiles to validate users
+                \item RADIUS
+                \item LDAP
+                \item Kerberos
+            \end{itemize}
+        \item Authentication Profiles and Sequences
+            \begin{itemize}
+                \item Authentication profile
+                \item Users checked against list
+            \end{itemize}
+        \item Creating Administrator Account
+            \begin{itemize}
+                \item Dynamic
+                \item Role based
+            \end{itemize}
+    \end{itemize}
+    
+\subsubsection{Account Administrator (con't)}
+    \begin{itemize}
+        \item Global Authentication Settings
+            \begin{itemize}
+                \item Set up a RADIUS server 
+                \item Configure RADIUS server and an Authentication Profile
+                \item Add Authentication Profile
+                \item There is no need to configure the admin user accounts on the firewall
+            \end{itemize}
+        \item Set Admin Passwords
+            \begin{itemize}
+                \item Device $\rightarrow$ Administrators
+            \end{itemize}
+        \item Minimum Password Complexity
+            \begin{itemize}
+                \item Prevent a common error and verify that the sum of the required characters is fewer than the max of 31 characters
+                \end{itemize}
+        \item Password Profiles
+            \begin{itemize}
+                \item Admin accounts can be have a password profile applied to alter security requirements
+                \end{itemize}
+        \item Reset to Factory Configuration
+            \begin{itemize}
+                \item With Admin User
+                    \begin{itemize}
+                        \item Erases all logs
+                        \item Resets all settings
+                        \item Saves a default config after the MGT IP is changed
+                        \item Run command:     request system private-data-reset
+                    \end{itemize}
+                \item Without Admin User
+                    \begin{itemize}
+                        \item From the console port
+                        \item Type maint during bootup
+                        \item Choose Reset to Factory Default
+                        \item Or load another config into memory
+                    \end{itemize}
+            \end{itemize}
+    \end{itemize}
+    
+\subsection{Administrative Controls}
+\subsubsection{Administrative Controls}
+    \begin{itemize}
+        \item Navigating the WebUI
+            \begin{itemize}
+                \item Most used
+                \item 7 tabs across the top are Functional Tabs
+                \item Left area is the menu based on tab selected
+                \item Bulk page shows what work can be done
+                \item Help button; search-able
+            \end{itemize}
+        \item Language Preference Setting
+            \begin{itemize}
+                \item Language selection is dynamic
+            \end{itemize}
+        \item WebUI Error Prompts
+            \begin{itemize}
+                \item Red underlines: Tabs that must be completed for a give interface
+                \item Yellow highlights: Required fields
+                \item OK button unavailable if interface is missing required info
+            \end{itemize}
+        \item CLI Modes
+            \begin{itemize}
+                \item Operational Mode $>$ prompt
+                \item Configuration Mode $\#$ prompt
+            \end{itemize}
+        \item CLI Tools
+            \begin{itemize}
+                \item Tab and space autocomplete
+                \item Linux shell
+                \item ? or tab key
+            \end{itemize}
+        \item PAN-OS Rest API
+            \begin{itemize}
+                \item XML api
+                \item requires api key
+            \end{itemize}
+        \item API Browser
+            \begin{itemize}
+                \item https://hostname/api
+            \end{itemize}
+    \end{itemize}
+    
+\section{Basic Interface Configuration}
+\subsection{Security Zones}
+\subsubsection{Security Zones}
+    \begin{itemize}
+        \item Introduction 
+            \begin{itemize}
+                \item Name
+                \item Zone Type
+                \item Interface
+            \end{itemize}
+        \item Security Zones and Policies
+            \begin{itemize}
+                \item Regulate and log traffic
+                \item Zones
+                    \begin{itemize}
+                        \item DMZ
+                        \item Internet
+                        \item Guests
+                        \item Data Center
+                        \item Users
+                    \end{itemize}
+                \item Intrazone traffic is \textit{allowed} by default
+                \item Interzone traffice is \textit{denied} by default
+            \end{itemize}
+        \item Security Zone Interfaces
+            \begin{itemize}
+                \item Interface can only have \textbf{one zone}
+                \item Zones can have \textbf{multiple interfaces}
+            \end{itemize}
+    \end{itemize}
+    
+\subsection{Interface Types}
+\subsubsection{Interface Types}
+    \begin{itemize}
+        \item Introduction
+            \begin{itemize}
+                \item Multiple interfaces can reside on one internet-facing device
+            \end{itemize}
+        \item Ethernet Interface Configuration
+            \begin{itemize}
+                \item Network $\rightarrow$ Interfaces $\rightarrow$ Ethernet
+            \end{itemize}
+        \item Flexible Deployment Options for Ethernet Interfaces
+            \begin{itemize}
+                \item TAP Mode
+                \item Virtual Wire
+                \item Layer 3
+            \end{itemize}
+        \item Ethernet TAP Mode
+            \begin{itemize}
+                \item Passively monitors network via SPAN
+            \end{itemize}
+        \item Configuring TAP Interfaces
+            \begin{itemize}
+                \item Select TAP from the interface listed
+            \end{itemize}
+    \end{itemize}
+
+\subsection{Virtual Wire Interfaces}
+    \begin{itemize}
+        \item Introduction
+            \begin{itemize}
+                \item Bind two physical locations as "bump and wire"
+                \item No VPN, switching, routing in VWire mode
+            \end{itemize}
+        \item Configuring a Virtual Wire Object
+            \begin{itemize}
+                \item Create object
+                \item Can be tagged
+            \end{itemize}
+        \item Virtual Wire Subinterfaces
+            \begin{itemize}
+                \item Zone is required because traffic will flow between virtual wire interfaces
+            \end{itemize}
+        \item Configuring a Virtual Wire Subinterface
+            \begin{itemize}
+                \item Treated as a separate entity and can be assigned its own zone
+            \end{itemize}
+    \end{itemize}
+    
+\subsubsection{Layer 2 and Layer 3 Interfaces}
+    \begin{itemize}
+        \item Introduction
+            \begin{itemize}
+                \item Allow to forward traffic
+            \end{itemize}
+        \item Layer 2 Interface Example
+            \begin{itemize}
+                \item Useful for flat networks
+            \end{itemize}
+        \item VLAN Configuration
+            \begin{itemize}
+                \item Create VLAN object
+                \item Then assign interface
+            \end{itemize}
+        \item Layer 2 Interface Configuration
+            \begin{itemize}
+                \item Select Layer 2 as type then add it to a VLAN and a security zone.
+            \end{itemize}
+        \item Layer 2 Subinterfaces
+            \begin{itemize}
+                \item Created like other subinterfaces
+            \end{itemize}
+    \end{itemize}
+    
+\subsubsection{Layer 2 and Layer 3 Interfaces (con't)}
+    \begin{itemize}
+        \item Configuring a Layer 3 Interface Overview
+            \begin{itemize}
+                \item Select Layer 3 and attach to a router
+            \end{itemize}
+        \item Configuring a Layer 3 Interface
+            \begin{itemize}
+                \item Need IP Address
+                \item Zone
+                \item Virtual Router
+                \item DHCP and PPPoE
+            \end{itemize}
+        \item Assigning an IP Address to an Interface
+            \begin{itemize}
+                \item Support 
+            \end{itemize}
+        \item Configuring a Layer 3 Subinterface
+            \begin{itemize}
+                \item Have same controls as Layer 3 Interfaces.
+            \end{itemize}
+        \item Interface Management Profile
+            \begin{itemize}
+                \item Management traffic sent to or from the firewall through out-of-band MGT interface.
+            \end{itemize}
+    \end{itemize}
+    
+\subsubsection{Virtual Routers}
+    \begin{itemize}
+        \item Introduction
+            \begin{itemize}
+                \item Network $\rightarrow$ Virtual Routers
+                \item Supports one or more static routes
+                \item RIPv2
+                \item OSPFv2
+                \item OSPFv3
+                \item BGPv4
+            \end{itemize}
+        \item Multiple Virtual Routers
+            \begin{itemize}
+                \item Dynmaic routes
+                \item Static routes
+                \item Must use CIDR
+            \end{itemize}
+        \item Virtual Router Static Routes
+            \begin{itemize}
+                \item Network $\rightarrow$ Virtual Routers $\rightarrow$ Static Routes $\rightarrow$ Add
+                \item Must use CIDR
+                \item 
+            \end{itemize}
+        \item Virtual Router Dynamic Routes
+            \begin{itemize}
+                \item RIP
+                \item OSPF
+                \item BGP
+                \item PIM-SM
+                \item PIM-SSM
+                \item PIMv2
+            \end{itemize}
+    \end{itemize}
+
+\subsubsection{Troubleshooting and Stats}
+    \begin{itemize}
+        \item Troubleshooting Routing
+            \begin{itemize}
+                \item Click \textit{More Runtime Stats}
+            \end{itemize}
+        \item More Runtime Stats
+            \begin{itemize}
+                \item To see routing table information through CLI, use the > \textit{show routing route}
+            \end{itemize}
+        \item Policy-Base Forwarding
+            \begin{itemize}
+                \item Destination IP address
+                \item Source IP address
+                \item Source zone
+                \item Source user
+                \item Destination application
+                \item Destination
+            \end{itemize}
+    \end{itemize}
+
+\subsubsection{IPv6 Capabilities}
+    \begin{itemize}
+        \item IPv6 Capabilities
+            \begin{itemize}
+                \item SLAAC
+                \item LDAP
+                \item RADIUS
+            \end{itemize}
+        \item Supported IPv6 Features
+            \begin{itemize}
+                \item Static Routing
+                \item Dynamic Routing
+                \item PBF
+                \item NAT (NAT64 only)
+                \item Site-to-Site VPN
+                \item IPv6 over IPv4 IPSec Tunnel
+                \item DNS Proxy
+            \end{itemize}
+        \item IPv6 Interface Configuration
+            \begin{itemize}
+                \item Supports dual stack for IPv4 and IPv6
+            \end{itemize}
+    \end{itemize}
+
+\subsubsection{Interfaces and DHCP}
+    \begin{itemize}
+        \item DHCP Server
+            \begin{itemize}
+                \item The firewall can act as a DHCP server or a DHCP client
+            \end{itemize}
+        \item DHCP Server Options
+            \begin{itemize}
+                \item Lease duration
+                \item gateway
+                \item addresses of servers
+            \end{itemize}
+    \end{itemize}
+
+\subsubsection{VLANs and Aggregate Interfaces}
+    \begin{itemize}
+        \item VLAN Interfaces
+            \begin{itemize}
+                \item All Layer 2 interfaces must be in Layer 2 zones
+                \item VLAN interface must be in a Layer 3 zone
+            \end{itemize}
+        \item Configuring a VLAN Interface
+            \begin{itemize}
+                \item To enable hosts in the VLAN to reach destinations outside the VLAN network, configure the default gateway on the hosts to point at the VLAN interface.
+            \end{itemize}
+        \item Configuring Loopback Interfaces
+            \begin{itemize}
+                \item In-band management
+                \item GlobalProtect Portal
+                \item Gateway Functionality
+                \item IPSec
+            \end{itemize}
+        \item Aggregate Interfaces
+            \begin{itemize}
+                \item Combine 8 ethernet interfaces
+            \end{itemize}
+        \item Create an Aggregate Interface
+            \begin{itemize}
+                \item Must all be the same type of interface (i.e., all copper or all fiber)
+            \end{itemize}
+        \item Assign an Interface to an Aggregate Group
+            \begin{itemize}
+                \item Create aggregate group and enable LACP and needed LACP settings.
+            \end{itemize}
+    \end{itemize}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+%\end{document}

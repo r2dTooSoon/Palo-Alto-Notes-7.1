@@ -1,0 +1,199 @@
+\section{Basic App-ID}
+\subsection{Agenda}
+    \begin{itemize}
+        \item Application Identification Overview
+        \item App-ID components
+        \item Security policy example
+        \item Application groups and filters
+        \item Application identification and classification
+    \end{itemize}
+
+\subsection{Application Identification (App-ID) Overview}
+\subsubsection{App-ID}
+Accurate traffic classification is core of any firewall with the result becoming the basis of the Security policy.
+
+\subsubsection{What is an Application?}
+Applications can be delivered through a web browser, a client-ser model, or a decentralized peer-to-peer design. 
+
+\subsubsection{Evasive Applications on a Traditional Firewall}
+Applications that change ports are difficult to track and control. 
+
+\subsection{App-ID Scenarios}
+\subsubsection{Scenario 1:  DNS Traffic - Traditional vs. Palo Alto Networks Firewall}
+Traditional firewalls use part blocking to control traffic. DNS uses port 53 and BitTorrent can also use 53. So on traditional firewalls blocking port 53 blocks DNS and BitTorrent which isn't good. PA Networks firewalls will block BitTorrent traffic on port 53 using application signatures.
+
+\subsubsection{Scenario 2:  BitTorrent - IPS vs App-ID}
+On traditional firewalls an IPS is required to block BitTorrent. 
+
+\subsubsection{Scenario 3:  Zero-Day Malware - IPS vs App-ID}
+Traditional firewall will allow the traffic because port 53 isn't block. The IPS will allow the traffic because it is doesn't have a reason to block it. PA Networks will block the zero-day because it doesn't match any of its signatures.
+
+\subsubsection{UDP - Application Data Presents in First Packet}
+In most cases, all the information that the firewall needs is contained in the first packet. 
+
+\subsubsection{TCP - 3-Way Handshake, and then Application Data}
+PA Networks require 7 bytes of data before it can determine which rule to apply.
+
+\subsubsection{App-Id flow}
+    \begin{enumerate}
+        \item Traffic is first classified based on the IP address and port
+        \item Signatures are then applied to the allowed traffic to identify the application based on unique application properties and related transaction characteristics
+        \item If App-ID determines that encryption (SSL or SSH) is in use and decryption policy is in place, the application is decrypted and application signatures are applied again on the decrypted flow.
+        \item Decoders for known protocols are then used to apply additional context-based signatures to detect other applications that may be tunneling inside of the protocol (for example, Yahoo! Instant Messenger used across HTTP). For applications that are particularly evasive and cannot be identified through advanced signature and protocol analysis, heuristics may be used to determine the identity of the application.
+    \end{enumerate}
+After the application is identified, the policy check determines how to treat the application:
+    \begin{itemize}
+        \item block
+        \item allow
+        \item scan for
+            \begin{itemize}
+                \item threats
+                \item file transfers
+                \item data patterns
+            \end{itemize}
+        \item Rate-limit for QoS
+    \end{itemize}
+
+\subsection{App-ID Components}
+\subsubsection{Introduction}
+    \begin{itemize}
+        \item Protocol decoders
+        \item Application signatures
+        \item Protocol decryption
+        \item Heuristics
+    \end{itemize}
+    
+\subsubsection{Protocol Decoders}
+These software constructs understand the application at the protocol level and provide context for the application. HTTP decoder understands that there will be a method and a version for each HTTP request. \textit{Protocol in a Protocol}
+
+\subsubsection{Application Signatures}
+Database of known application signatures for use in the App-ID engine. Updates to the database are issued weekly.
+
+\subsubsection{Application Dependencies}
+When you create a policy to allow specific applications, you must also be sure that you are allowing any other applications on which the application depends. In many cases, you do not have to explicitly allow access to the dependencies and allow them implicitly. This implicit support also applies to custom application that are based on HTTP, SSL, MS-RPC, or RTSP.
+
+\subsubsection{Applications That Depend on Applications}
+Notice that four dependent application must be allowed on the firewall to use the application Office-on-Demand. Therefore, you must account and allow for these dependent applications within your configurations.
+
+\subsubsection{Implicit Application Dependencies}
+    \begin{itemize}
+        \item software-update apps
+        \item Apps identified in rpc decoder
+        \item Apps identified in msrpc decoder
+        \item Apps identified in rtmp decoder
+        \item Media streaming apps
+        \item Citrix ICA/Jedi
+        \item IM apps
+        \item Apps identified base on SSL request and resonse.
+    \end{itemize}
+    
+\subsubsection{Applications with Implicitly Used Applications}
+Before Facebook can be used, the SSL and web-browsing applications are required. Therefore, the facebook-base application implicitly includes both of these applications, which means that you do not need to take action to include either SSL or web browsing when you configure you Facebook policy.
+
+\subsubsection{Implicit Application}
+    \begin{itemize}
+        \item PAN-OS software implicitly allows parent applications for a set of commonly used applications such as SSL and web browsing
+        \item Facebook will work even if Allow Web Browsing policy rule were to be disabled or deleted.
+    \end{itemize}
+\subsubsection{Application Dependencies}
+Configure the policy to allow all of its dependent
+    \begin{itemize}
+        \item Applications
+        \item Services
+        \item URL categories
+    \end{itemize}
+
+\subsection{Security Policy Example}
+\subsubsection{Using Port Numbers in Security Policy Rules}
+The application and service columns specify which applications can be identified on a defined set ports, or on all available ports
+    \begin{itemize}
+        \item \textbf{application-default}:  The service application-default option will set the Security policy to allow the application on the standard ports associated with the with the application
+        \item \textbf{service-http or service-https}:  The predefined services use TCP ports 80 and 8080 for HTTP
+        \item \textbf{any}:  The predefined service any matches any TCP/UDP port.
+        \item \textbf{Custom service:}  Administrators can create their own definition of TCP and UDP port numbers to restrict applications usage to specific ports
+    \end{itemize}
+
+\subsubsection{Security Policy Example:  http-get}
+The firewall scans the traffic and finds the application signature for the http-process, which matches the web-browsing application in APP-ID.
+
+\subsubsection{Security Policy Example:  Google Translate}
+Once traffic starts it can read the traffic and change it. 
+
+\subsubsection{Application Block Response Pages}
+Custom response pages to sites that have been blocked to indicate to users that it isn't working on purpose.
+
+\subsection{Application Groups and Filters}
+\subsubsection{Application Groups and Filters}
+\subparagraph{Application groups:}  Aggregates of
+    \begin{itemize}
+        \item Individual App-IDs
+        \item Application filters
+        \item Nested application groups
+    \end{itemize}
+\subparagraph{Application filters:} 
+Dynamic grouping 
+individual App-IDs based on App-IP attributes:
+    \begin{itemize}
+        \item Category
+        \item Subcategory
+        \item Technology
+        \item Risk
+        \item Characteristic
+    \end{itemize}
+\subsubsection{Application Groups}
+Static, user-defined sets of applications. However, application groups may also contain application filters, and other application groups. 
+These application groups enable the firewall administrator to create a logical grouping of applications that can be applied to policies. 
+Note that application groups themselves are not updated when the App-ID database updates, as is the case with the application filters.
+
+An application group is an object that contains applications that you want to treat similarly in a policy.
+Instead of updating individual policy rules when there is a change in the applications you support, you update on the affected application group
+
+\subsubsection{Application Filters}
+An object that dynamically groups applications based on application attributes that you define, including
+    \begin{itemize}
+        \item category
+        \item subcategory
+        \item technology
+        \item risk factor
+        \item characteristics
+    \end{itemize}
+
+\subsubsection{Application Groups with Filters:  Example}
+Application Groups:
+    \begin{itemize}
+        \item \textbf{Known\_Good}(those applications and filters that will be allowed when applied to a policy rule).
+        A static group of applications with a dynamic application filter:
+            \begin{itemize}
+                \item dns
+                \item Web-browsing
+                \item ssl
+                \item Flash
+                \item Browser-based-vuln-risk-1 (the dynamic application filter)
+            \end{itemize}
+        \item \textbf{Known\_Bad}(those applications and filter that will be denied when applied to a policy rule.) A static application filter:
+            \begin{itemize}
+                \item generic-p2p
+                \item Unknown-p2p
+                \item Browser-base-vuln-risk5 (the dynamic application filter)
+            \end{itemize}
+    \end{itemize}
+    
+\subsubsection{Identify Unknown Traffic}
+The predefined application groups, along with their respective application filters which are now part of the corresponding application group as a member, 
+have been added in the security policy rules to either allow or deny the application as previously described.
+\subsubsection{Application Filters and Group Hierarchy}
+Applications are automatically added to matching application filters when they are added to the App-ID database
+
+Application groups are manually configured to include
+    \begin{itemize}
+        \item applications
+        \item applications filters
+        \item other applications groups
+    \end{itemize}
+\subsection{Application Identification and Classification}
+\subsubsection{Identify Unknown Traffic, Unclassified Traffic}
+\subsubsection{Newly Classified Traffic:  Content Updates}
+\subsubsection{Newly Classified Traffic:  Content Updates (Cont)}
+\subsubsection{Newly Classified Traffic:  Content Updates (Cont)}
+\subsubsection{Newly Classified Traffic:  Content Updates (Cont)}
+
