@@ -1,0 +1,206 @@
+\section{Threat Landscape}
+\subsection{Evolution of Malware}
+\begin{itemize}
+    \item \textbf{First Generation:}
+        \begin{itemize}
+            \item DoS Viruses (1986-1995)
+            \item Macro Viruses (1995-2000)
+        \end{itemize}
+    \item \textbf{Second Generation:}
+        \begin{itemize}
+            \item Big Impact Worms (1999-2005)
+            \item Malcode for Profit (2004-2010)
+        \end{itemize}
+    \item \textbf{Next Generation:}
+        \begin{itemize}
+            \item APTs for Profit
+            \item Cybercrime
+        \end{itemize}
+\end{itemize}
+
+\subsection{Advanced Persistent Threats}
+\subsubsection{Introduction}
+\begin{quote}
+    An adversary that possesses sophisticated levels of expertise and significant resources, allowing them to create opportunities to achieve their objectives by using multiple attack vectors. 
+    -National Institute of Standards and Technology (NIST)
+\end{quote}
+
+\subsubsection{Changes to the Attack Strategy}
+\subparagraph{Time}
+APTs unfold in multiple phases. Attackers must identify vulnerabilities to exploit the client, evaluate existing security controls, gain access to privileged hosts, find target data, and exfiltrate data.
+
+\subparagraph{Sophistication}
+Attackers are a sophisticated community of security researchers who constantly evolve their tools and methods to more effectively achieve their objectives.
+
+\subparagraph{Directionality}
+External threats quickly become internal attackers once a foothold is established.
+
+\subparagraph{Evergreen}
+Every-changing malware may evade antivirus programs. With polymorphic threats, the threat will mutate while keeping the original algorithm intact and avoid detection by antivirus software.
+
+\subparagraph{Proactive}
+Attackers generally have a clear objective and victim in mind prior to looking for entry into a targeted organization.
+
+\textit{NOTE:} Zero-day or new malware can live on a network for days before being detected. 
+Threat prevention tools require 72 hours on average to detect new malware. 
+With WildFire, signatures are generated and delivered in as little as 5 minutes, thus reducing the time that a threat is effective.
+
+\subsection{Attack Lifecycle}
+\subsubsection{Introduction}
+The \textit{Attack Lifecycle} is a sequence of events that an attacker goes through to successfully infiltrate a network and exfiltrate data from it.
+The good news is that blocking just one stage in this lifecycle is all that is needed to protect a company's network and data from attack.
+
+\subsubsection{Reconnaissance}
+The collection of information about the target.
+\begin{itemize}
+    \item Discovering family information or hobbies for use in a phishing or watering hole attacks.
+    \item Mapping networks
+    \item Ping sweeps, fingerprinting, and port scanning.
+\end{itemize}
+
+\subsubsection{Weaponization}
+In the \textit{Weaponization} phase, the attackers determine which methods to use.
+They may choose to embed intruder code within seemingly innocuous files like a PDF or Word document or email message. Or, for highly targeted attacks, attackers may craft deliverables to match specific interests of an individual.
+
+\subsubsection{Delivery}
+The \textit{Delivery} phase typically consists of client exploitation. Methods commonly used to deliver a malicious payload include the following:
+\begin{itemize}
+    \item Phising email with a malicious attachment or link
+    \item Malicious code injected into a compromised site known to be visited by a targeted victim.
+    \item Attached exploit sent over SMTP.
+\end{itemize}
+
+\subsubsection{Exploitation}
+The \textit{Exploitation} phase occurs once the attackers gain access into an organization. 
+The attackers can activate attack code on the victim's host and ultimately take control of the target machine.
+
+\subsubsection{Command and Control}
+In the \textit{Command and Control (C2)} phase, attackers establish a command channel back through the internet to a specific server so that they can communicate and pass data back and forth between infected devices and their server.
+
+\subsubsection{Installation}
+In the \textit{Installation} phase, attackers will try to establish privileged operations, install root kits, escalate privileges, and persistence.
+Attackers may have different motivations for exploiting the environment. Not all attack are for profit.
+Attackers could try to exfiltrate data, destroy critical infrastructure, or deface web sites.
+
+\subsubsection{Action on Objects}
+The attacker performs the steps necessary to achieve his actual goal inside the victim's network.
+This is an elaborate active attack process that takes thousands of small steps over several months.
+
+
+
+\subsection{Data Breach and Attack Tactics}
+\subsubsection{Target Data Breach}
+\subparagraph{APTs in Action}
+\begin{itemize}
+    \item Recon on companies Target works with
+    \item Spear phishing third-party HVAC contractor
+    \item Breach Target network with stolen payment system credentials
+    \item Moved laterally within Target network and installed POS malware
+    \item Compromised internal server to collect customer data
+    \item Exfiltrated data C2 servers over FTP
+\end{itemize}
+
+\subparagraph{Tools and Techniques}
+\begin{itemize}
+    \item \textbf{Recon}: Locate a vendor
+    \item \textbf{Spear Phishing}: Obtain login credentials
+    \item \textbf{BlackPOS}: Deliver POS malware
+    \item \textbf{Botnet}: Internal C2
+    \item \textbf{FTP}: Data exfiltration
+\end{itemize}
+
+\subsubsection{Aununak Infection}
+\subparagraph{Methods of Infection}
+\begin{itemize}
+    \item Drive-by infections of Andromeda and Pony trojans through Neutrino Exploit Kits
+    \item Spear phishing with malicious attachments on behalf of the Central Bank of the Russian Federation
+    \item Identify already infected machines and purchase ownership from botnet herders.
+    \item Money withdrawn directly from ATMs and cash sending channels like Yandex Money.
+    \item These attackers gained access to 52 ATMs. Total amount of theft was over 1 billion rubles in Russia alone.
+\end{itemize}
+
+\subparagraph{Tools and Techniques}
+\begin{itemize}
+    \item \textbf{.doc .exe .cpl files}: Core malware payload
+    \item \textbf{Mimikatz/Cain\&Abel}: Escalation of privileges
+    \item \textbf{SoftPerfect}: Network scanning
+    \item \textbf{SSHD backdoor}: C2 - Linux
+    \item \textbf{Ammyy Admin}: Remote control - Windows
+    \item \textbf{Team Viewer}: Remote control - Windows
+\end{itemize}
+
+\subsubsection{Desert Falcons Attack Tactics}
+\subparagraph{Attack Tactics}
+\begin{itemize}
+    \item Use of social media chats deliver trojan files and encourage the victims to run them.
+    \item Use of spear phishing emails that attempted to trick the victim into opening a malicious attachment.
+    \item Use of commonly exploitable file types to extract, set up, and run the malware.
+    \item A complete list of sensitive files is retrieved from the victim's machine.
+    \item Depending on the importance of the victim, the surveillance is either intensified or dropped.
+    \item More than 1 million files and documents containing sensitive information stolen from victims' computers and devices.
+\end{itemize}
+
+\subparagraph{Tools and Techniques}
+\begin{itemize}
+    \item \textbf{Facebook chat}: Malware delivery
+    \item \textbf{Malicious posts}: Malware delivery
+    \item \textbf{.lnk .scr .rar files}: Core malware payload
+    \item \textbf{Password-protected archive}: Data exfiltration 
+\end{itemize}
+
+\subsubsection{Lessons Learned}
+\begin{itemize}
+    \item System hardening, integrity assurance, and software version/patch management are just the first steps in protecting against threats
+    \item Inbound, outbound, and intra-tier network traffic needs to be controlled and monitored.
+    \item Network segmentation is a positive step toward exposing only the minimal amount of information required for a specific organizational processes.
+    \item True threat prevention that can detect previously unknown threats is a modern necessity.
+    \item The security of an entire network can be negatively impacted by a single compromised asset.
+\end{itemize}
+
+\subsection{Threat Management Strategies}
+\subsubsection{Integrated Approach to Threat Prevention}
+Threat prevention capabilities of the Palo Alto Networks next-generation firewall include the following:
+\begin{itemize}
+    \item Application identification
+    \item User identification
+    \item URL filtering
+    \item Vulnerability protection
+    \item Anti-spyware
+    \item Antivirus
+    \item Traps
+    \item File blocking
+    \item WildFire advanced malware protection
+    \item DoS protection
+    \item Zone protection
+\end{itemize}
+
+\subsubsection{Strategy for Advanced Threat Prevention}
+Advanced attacks are not random events. They are highly organized campaigns that leverage multiple techniques, operating simultaneously over long periods of time.
+\newline
+Five imperative strategies for advanced threat management are as follows:
+\begin{itemize}
+    \item Achieve complete visibility of all traffic, regardless of port, protocol, or encryption.
+    \item Limit and control the traffic entering the network to reduce the amount of traffic that needs to be analyzed for zero days and APTs.
+    \item Block known threats with signatures.
+    Signatures for all types of malware are generated from millions of live virus samples sent to WildFire.
+    \item Take automated action against unknown threats with WildFire. This sandbox offering analyzes suspicious samples to identify malicious behavior.
+    \item Create closed-loop protections for all newly discovered threats and automatically update perimeter defenses against future attacks from the threat.
+\end{itemize}
+
+\subsection{Summary}
+\begin{itemize}
+    \item Threat Landscape
+        \begin{itemize}
+            \item Tools
+            \item Techniques
+        \end{itemize}
+    \item Target, Anunak, Desert Falcon Attacks
+        \begin{itemize}
+            \item Data breach
+            \item Attack tactics
+        \end{itemize}
+    \item Threat management strategies
+        \begin{itemize}
+            \item Integrated Approach
+        \end{itemize}
+\end{itemize}

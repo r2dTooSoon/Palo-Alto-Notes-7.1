@@ -1,0 +1,181 @@
+\section{Integrated Approach to Threat Protection}
+\subsection{The Integrated Approach}
+\subsubsection{Strategy for Advanced Threat Prevention}
+Advanced attacks are not random events. They are highly organized campaigns that leverage multiple techniques, operating simultaneously over long periods of time.
+\newline
+Five imperative strategies for advanced threat management are as follows:
+\begin{itemize}
+    \item Achieve complete visibility of all traffic, regardless of port, protocol, or encryption.
+    \item Limit and control the traffic entering the network to reduce the amount of traffic that needs to be analyzed for zero days and APTs.
+    \item Block known threats with signatures.
+    Signatures for all types of malware are generated from millions of live virus samples sent to WildFire.
+    \item Take automated action against unknown threats with WildFire. This sandbox offering analyzes suspicious samples to identify malicious behavior.
+    \item Create closed-loop protections for all newly discovered threats and automatically update perimeter defenses against future attacks from the threat.
+\end{itemize}
+
+\subsubsection{Value of the Integrated Platform}
+An organization's architecture may provide limited visibility. Even the best endpoint security must be able to communicate its intelligence to the rest of the organization's critical points.
+\begin{itemize}
+    \item \textbf{WildFire}: Analyzes unknown files and sends signatures every 5 minutes to all WildFire customers, and within 24 to 48 hours for Threat Prevention costomers.
+    \item \textbf{Endpoint Security Manager}: Server queries WildFire every 30 minutes for changes to verdicts such as:
+        \begin{itemize}
+            \item benign
+            \item malware
+            \item grayware
+        \end{itemize}
+\end{itemize}
+
+\subsection{Next-Generation Firewall}
+\subsubsection{Network Security Framework}
+\begin{itemize}
+    \item \textbf{Identify}: Identify the critical systems, assets, data, and capabilities needed to maintain business health.
+    \item \textbf{Protect}: Implement defenses to safeguard critical infrastructure services.
+    \item \textbf{Detect}: Recognize and identify the occurrence of a cybersecurity event.
+    \item \textbf{Respond}: Action to stop or contain a detected cybersecurity event.
+    \item \textbf{Recover}: Restore the functionality impaired by a cybersecurity event.
+\end{itemize}
+
+\subsubsection{Flow Logic of the Next-Generation Firewall}
+As features of the Palo Alto Networks firewalls are discussed in this course, you should know where they fit into the packet flow through the firewall.
+
+\subsubsection{App-ID}
+Here's how App-ID identifies applications crossing the network:
+\begin{itemize}
+    \item Traffic is first classified based on the IP address and port.
+    \item Signatures are then applied to the traffic to identify the application based on unique application properties and related transaction characteristics.
+    \item If App-ID determines that encryption (SSL or SSH) is in use, and a decryption policy is in place, the application is decrypted and application signatures are applied again on the decrypted flow.
+    \item Decoders for known protocols are then used to apply additional context-based signatures to apply additional context-based signatures to detect other applications that may be tunneling inside of the protocol (e.g., Yahoo! Instant Messenger used across HTTP)
+    \item For applications that are particularly evasive and cannot be identified through advanced signature and protocol analysis, heuristics, or behavioral analysis may be used to determine the identity of the application.
+\end{itemize}
+
+\subsubsection{User-ID}
+\textit{User-ID} seamlessly integrates with your existing user repositories or terminal services environment. 
+
+\subsubsection{Content-ID}
+Provides full integrated protection from vulnerability exploits, malware, and malware-generated command and control (C2) traffic. Palo Alto Networks Threat Prevention technologies include:
+\begin{itemize}
+    \item IPS functionality block vulnerability exploits, buffer overfows, DoS attacks, and port scans. 
+    Additional capabilities such as blocking invalid or malformed packets, IP defragmentation, and TCP reassembly protect from teh evasion and obfuscation methods used by attackers.
+    \item Stream-Based Network antivirus service maintains a database of more than 15 million samples of malware. Every day we analyze an additional 50,000 samples.
+    Malware is detected by a stream-based engine that blocks in-line at very high speeds. 
+    Malware enforcement is available across a variety of protocols including HTTP, SMTP, IMAP, POP3, FTP, and SMB.
+    \item The anti-spyware service protects against spyware and malware. 
+    It also passively analyzes DNS queries to identify the unique patterns of botnets.
+    This analysis reveals infected users and prevents data from leaving an enterprise network.
+    
+\end{itemize}
+
+\subsubsection{PAN-DB}
+\begin{itemize}
+    \item Securely enable web usage
+    \item Blocks access to malicious sites
+    \item Creates allow and block list
+    \item Do not decrypt traffic based on URL categories
+\end{itemize}
+
+\subsection{Advanced Endpoint Protection}
+\subsubsection{Traps Benefits}
+\begin{itemize}
+    \item Prevent Zero-Day Vulnerabilities and Unknown Malware
+    \item Install Patches on Your Own Schedule
+    \item Protect \textit{Any} Application from Exploits
+    \item No Signatures or Frequent Updates
+    \item Avoid Remediation Costs
+    \item Network and Cloud Integration
+    \item Minimal Performance Impact
+\end{itemize}
+
+\subsubsection{Traps Levels of Protection}
+\begin{itemize}
+    \item Exploit prevention
+        \begin{itemize}
+            \item Memory corruption
+            \item Logic flaws
+        \end{itemize}
+    \item Malware protection
+        \begin{itemize}
+            \item Restrictions
+            \item Malware protection modules
+            \item WildFire
+        \end{itemize}
+    \item Forensic
+        \begin{itemize}
+            \item Memory dumps
+            \item Forensic collection
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Traps Exploit Prevention}
+Exploits are blocked by Traps and fail before any malicious activity is initiated.
+\newline
+Infected document opened by unsuspecting user $\rightarrow$ Traps is seamlessly injected into processes $\rightarrow$ Exploit technique is attempted and blocked by Traps before any malicious activity is initiated $\rightarrow$ Traps report the event and collects detailed forensics.
+
+\subsubsection{Malware Protection}
+When a user starts to open an executable file, a hash of the file is taken and compared against the local cache or, if needed, it is sent to WildFire for inspection.
+If it's known to be bad, the file is blocked.
+
+\subsubsection{Preventing Malicious Executable on All Fronts}
+\begin{itemize}
+    \item \textbf{WildFire Inspection and Analysis}: Dynamic analysis with cloud-based threat intelligence
+    \item \textbf{Advanced Execution Control}: Reduce surface area of attack; control execution scenarios based on file locatoin, device, child processes, and unsigned executables.
+    \item \textbf{Malware Techniques Mitigation}: Prevent unknown malware with technique-based mitigation.
+\end{itemize}
+
+\subsubsection{Ongoing Forensics/Attack-Triggered Capture}
+\subparagraph{Ongoing Recording}
+    \begin{itemize}
+        \item Time of execution
+        \item Filename
+        \item File hash
+        \item Username
+        \item Computer name
+        \item IP address
+        \item OS version
+        \item File's malicious history
+    \end{itemize}
+    
+\subparagraph{Attack-Related Forensics}
+\begin{itemize}
+    \item Timestamp and full memory dump
+    \item Triggering file
+    \item File source, names, and paths, including parents, grandparents, and child processes
+    \item Prevented exploitation technique
+    \item IP address
+    \item OS version
+    \item Version of attempted vulnerable software
+    \item Components loaded to memory under the attacked process
+    \item Indications of further memory corruption activity
+    \item Username and computer name
+    \item Accessed URIs: Java applets source URIs
+    \item Relevant DLL retrievals with their path
+    \item Relevant files from temporary Internet folders
+    \item Traps Automated Dump Analysis - Secondary analysis indicates techniques detected.
+\end{itemize}
+
+
+\subsection{Threat Intelligence Cloud}
+\subsubsection{Expanded Cloud Protection}
+\begin{itemize}
+    \item Threat Intelligence Cloud provides protections
+    \item WildFire analyzes files, URLs, and DNS requests
+    \item Threat Prevention combines intrusion prevention, network anti-malware, and C2 signatures.
+    \item URL filtering prevents access malicious websites
+    \item AutoFocus provides threat intelligence
+    \item Unit 42 threat research and analysis team
+    \item Aperture secures SAAS.
+\end{itemize}
+
+\subsubsection{Threat Intelligence Cloud}
+
+
+\subsubsection{WildFire}
+
+
+\subsubsection{AutoFocus Threat Intelligence Summary}
+
+
+\subsubsection{Unit42: Threat Research and Analysis}
+
+
+
+\subsection{Summary}

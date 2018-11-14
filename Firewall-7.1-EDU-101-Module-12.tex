@@ -1,0 +1,185 @@
+\section{Active/Passive High-Availability}
+\subsection{High Availability}
+\begin{itemize}
+    \item Active/Passive:
+        \begin{itemize}
+            \item Requires 2 connections to each other. One processes all the traffic while the other waits
+        \end{itemize}
+    \item Active/Active
+        \begin{itemize}
+            \item Requires 3 connections to each other. Does not increase processing power or throughput. One firewall must be able to withstand 200\% of the traffic.
+        \end{itemize}
+\end{itemize}
+
+\subsection{Active/Passive High-Availability Overview}
+\subsubsection{Active/Passive Overview}
+\begin{itemize}
+    \item Synchronization of:
+        \begin{itemize}
+            \item Statefull connections 
+            \item Certificates
+            \item Response pages
+            \item Configuration
+        \end{itemize}
+    \item Not Synchronized:
+        \begin{itemize}
+            \item Statless connections
+            \item HA Configuration
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{HA Links}
+\begin{itemize}
+    \item \textbf{HA1} communicates with the control plan and is used to synchronize the configuration between the devices.
+    This interface requires an IP address that is different from the management interface address.
+    \item \textbf{HA2} interacts with the dataplane and is used to synchronize active sessions.
+\end{itemize}
+
+\subsubsection{Error State Detection}
+Multiple mechanisms can be configured to monitor status of the HA pair.
+Any of these events can cause a device to enter the nonfunctional state and to trigger a switchover in the event of a failure on the active device.
+\newline
+Heartbeat polling occurs in both directions between the control planes of the active and passive devices to determine the health of each.
+\newline
+Path monitoring can be used to ensure Layer 3 connectivity via ICMP pings to any upstream or downstream devices. 
+\newline
+Link monitoring watches the physical interface state on one or more interfaces.
+
+\subsection{Active/Passive Configuration}
+\subsubsection{Active/Passive Configuration}
+\textit{Device $\rightarrow$ High Availability $\rightarrow$ General}
+\newline
+The important factor in setting up an active/passive pair is to uniquely identify all of the components.
+When you configure HA on a firewall, specify the IP address of the HA1 interface on the peer HA device:
+\begin{itemize}
+    \item \textbf{Group ID:} Allows multiple pairs of active/passive firewalls to reside on the same network.
+    \item \textbf{Device Priority:} Determines the order in which a firewall becomes the active device when both are functioning normally.
+\end{itemize}
+A backup HA1 link can be configured from this page for redundancy protection:
+\begin{itemize}
+    \item When a standard traffic interface for the backup link is used, set the Backup HA Peer IP Address in the Setup tab and configure a backup HA1 link locally.
+    \item When Heartbeat Backup in the Election Settings tab is selected, the device uses the management (MGT) interface as a backup path for HA1 traffic.
+    The management interface IP address is shared with the HA peer through the HA1 control link. No additional configuration required.
+\end{itemize}
+
+\subsubsection{HA1 Link Configuration}
+\textit{Device $\rightarrow$ High Availability $\rightarrow$ General $\rightarrow$ Control Link (HA1)}
+\newline
+The HA1 link behaves as a Layer 3 interface and requires an IP address.
+The HA agent uses TCP port 28769 (cleartext) or SSH over TCP port 49969 (if encryption is used).
+The link also is used to synchronize configuration and management plane information, such as routing and User-ID updates.
+For redundancy purposes, configure a backup link for HA1 communications. 
+HA1 backup is not supported on management interface that addressed using DHCP.
+
+\subsubsection{HA2 Link Configuration}
+\textit{Device $\rightarrow$ High Availability $\rightarrow$ General $\rightarrow$ Data Link (HA2)}
+
+\begin{itemize}
+    \item The HA2 link is a Layer 2 link. It uses Ethernet as transport by default with EtherType 0x7261, which must be specified when the HA2 link is connected through a switch or back-to-back.
+    \item The HA2 link also can be configured to use IP or UDP as the transport type, allowing the HA2 link to be connected across Layer 3 networks.
+    IP protocol number 99 and UDP port 26281 are used when IP or UDP is used as the transport.
+\end{itemize}
+The available actions if the keep-alive detects a failure are:
+\begin{itemize}
+    \item \textit{Log Only:} This option generates a critical-level system log message when an HA2 failure occurs based on the threshold setting.
+    If the HA2 path recovers, an informational log is generated.
+    \item \textit{Split Datapath:} If session synchronization is disabled by the admin, or by monitoring failure, session ownership and session setup both are set to the local device and new sessions are processed locally for the session lifetime.
+\end{itemize}
+
+\subsubsection{HA Election Settings}
+\textit{Device $\rightarrow$ High Availability $\rightarrow$ General $\rightarrow$ Election Settings}
+\newline
+\begin{itemize}
+    \item \textit{Aggressive:} Faster failover times
+    \item \textit{Recommended:} Standard failover times
+    \item \textit{Advanced:} Custom, which is when the user defines for each individual timer.
+\end{itemize}
+
+\subsubsection{Link Monitoring}
+\textit{Device $\rightarrow$ High Availability $\rightarrow$ Link and Path Monitoring}
+\newline
+The \textit{link monitoring} feature verifies the link-state connections at specific physical interfaces or groups of interfaces.
+A failure condition can be initiated if any link is down, or if all links are down.
+
+\subsubsection{Path Monitoring}
+\textit{Device $\rightarrow$ High Availability $\rightarrow$ Link and Path Monitoring}
+\newline
+The firewall also can check the state of external devices with \textit{path monitoring}.
+For example, an Ethernet link with an Up stat has no value if the upstream gateway is offline.
+
+\subsubsection{HA Major Version Session Sync Compatibility}
+Existing sessions can by synchronized to a peer device when there is an OS mismatch or a device running a newer major or minor version of code.
+
+\subsection{Managing Split Brain}
+\subsubsection{Split Brain Overview}
+Split brain is a high-availability term that refers to the situation where both nodes in an HA pair are trying to take control:
+\begin{itemize}
+    \item Certain dataplane issues can disrupt traffic but not result in complete dataplane failure, which leaves the firewall in a partially running state.
+    \item Without a dedicated non-in-band HA1 control link, such dataplane issues could result in HA control traffic not being passed between HA pair members
+    \item This disruption of traffic would cause both devices to \textit{think} that the other was unavailable and cause both devices to go into an Active state at the same time.
+\end{itemize}
+
+\subsubsection{Split Brain Solution}
+One way to prevent split brain is to select the Heartbeat Backup option when you configure HA:
+\begin{itemize}
+    \item This option uses the MGT interface on the HA devices to provide a backup path for only heartbeat and hello messages. No other HA1 functionality is provided.
+    \item The HA1 port on the fully functional device contacts the MGT port via its IP address.
+    \item The MGT interface IP address is shared with the HA peer through the HA1 control link prior to the failure.
+\end{itemize}
+Split brain also can be avoided in many cases if you configure a fully independent backup HA1 link:
+\begin{itemize}
+    \item When the HA1 link goes down, the firewall switches all HA1 traffic to the backup HA1 link.
+    \item If either hellos or heartbeats are also failing on the backup link, then the HA1 failure is treated as a device failure.
+    \item Communications failures when the MGT interface is used indicate a management plane failure and are a clear indicator of device failure.
+\end{itemize}
+
+\subsection{Monitoring}
+\subsubsection{Device States}
+\textit{Dashboard $\rightarrow$ Widgets $\rightarrow$ System $\rightarrow$ High Availability}
+\begin{itemize}
+    \item \textbf{Initial:} HA is starting; it will become active after 60 seconds if HA negotiation has not started.
+    \item \textbf{Active:} Normal traffic handling state.
+    \item \textbf{Passive:} Normal backup state
+    \item \textbf{Suspend:} Administratively disabled
+    \item \textbf{Non-functional:} Error state
+    \item \textbf{Unknown:} Peer has never connected
+\end{itemize}
+
+\subsubsection{Device States Comparison: Active and Passive}
+\textit{Dashboard $\rightarrow$ Widgets $\rightarrow$ System $\rightarrow$ High Availability}
+\begin{itemize}
+    \item \textbf{Green:} good
+    \item \textbf{Yellow:} warning
+    \item \textbf{Red:} critical
+\end{itemize}
+
+\subsubsection{Displaying HA Status with the CLI}
+\begin{verbatim}
+> show high-availability all
+> show high-availability state
+> show high-availability link-monitoring
+> show high-availability path-monitoring
+\end{verbatim}
+
+\subsection{Active/Active HA Brief Overview}
+\subsubsection{Active/Active Introduction}
+With active/active deployment, both the devices are active and processing traffic.
+Active/active HA is supported only in the virtual wire and Layer 3 modes.
+Such deployments are most suited for scenarios involving asymmetric routing.
+\begin{itemize}
+    \item Both devices in the pair are:
+        \begin{itemize}
+            \item Actively processing and passing traffic
+            \item Load-sharing the traffice
+        \end{itemize}
+    \item Devices back each other up, taking over primary ownership if the other one fails.
+    \item No increase in session capacity
+    \item Not designed to increase throughput
+\end{itemize}
+\subsubsection{Active/Active Links}
+In addition to the HA1 and HA2 links used in active/passive deployments, \textbf{active/active deployments} require a dedicated HA3 link.
+This link is used as packet-forwarding link for session setup and asymmetric traffic handling. 
+Because of this requirement, carefully consider the sizing of the HA3 link.
+\newline
+Excessive packet passing between the session owner and setup devices could overrun a single HA3 link.
+Aggregate interfaces should be considered for HA3 links if the firewall model supports link aggregation.

@@ -1,0 +1,372 @@
+\section{Decryption}
+\subsection{Decryption Overview}
+\subsubsection{SSL Encryption Overview}
+The two broad categories of encryption algorithms are symmetric and asymmetric
+
+\textbf{Asymmetric Key Encryption (public key encryption)} uses two different keys for encryption and decryption:
+\begin{itemize}
+    \item Data encrypted with one key can be decrypted only by the other key in the pair.
+    \item The advantage of asymmetric encryption is that it allows for a secure transfer info between parties that have no pre-existing communication
+    \item With one private key and one publicly available key, encrypted traffic can be sent between any two users of this system.
+    The disadvantage of this method is that it is slow for computer to perform this type of encryption on the bulk of messaging
+\end{itemize}
+
+\textbf{Symmetric key encryption (pre-shared secret)} uses a single key to encrypt and decrypt messages:
+\begin{itemize}
+    \item The greatest disadvantage of them method is that the key must be known by both parties before any secure communication can be used.
+    \item The key must be exchanged through an existing secure channel.
+    \item This limitation makes any kind of spontaneous exchange difficult to achieve.
+    New key information cannot be sent securely if the current key is suspect
+\end{itemize}
+
+\subsubsection{SSL Session Overview}
+SSL represents a protocol for encrypting an HTTP connection between a client and a server where no pre-existing secure channel is presents.
+SSL takes advantage of the strengths of the symmetric and asymmetric encryption schemes.
+
+Initiation of an SSL session follows this basic flow:
+\begin{itemize}
+    \item A client requests an SSL connection
+    \item The server responds with its SSL certificate
+    \item The client validates the server certificate
+    \item If the certificate is valid the client uses the key to encrypt a symmetric session key and send it to the server.
+    \item At this point, both sides of the communication have the same symmetric key and can begin sending bulk data over their new secure channel. Periodically, they might need to establish a new session and rekey the communication.
+\end{itemize}
+
+\subsubsection{Decryption Overview}
+\begin{itemize}
+    \item Why does the Palo Alto Networks firewall decrypt traffic?
+        \begin{itemize}
+            \item Sessions that attempt to hide their application signature encrypt the Layer 7 information.
+            \item Sessions attempt to hide sensitive data in encrypted file transfers.
+        \end{itemize}
+    \item The Palo Alto Networks firewall acts as a forward proxy for outbound SSL decryption.
+    \item Palo Alto Networks firewalls listen on all ports and can decrypt:
+        \begin{itemize}
+            \item SSL inbound and outbound traffic
+            \item SSHv2
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Decryption Policies}
+The fire wall can be configured to decrypt SSL and SSH traffic going to external sites.
+With the SSH option, you can selectively decrypt outbound and inbound SSH traffic to ensure that secure protocols are not being used to tunnel disallowed applications and content.
+You also can apply decryption profiles to your policies to block and control various aspects of SSL traffic.
+
+\subsection{Certificate Management}
+\subsubsection{Introduction}
+PKI certificate is a method of packaging and distributing asymmetric keys.
+It is basically a key packaged with information about the nature of the key and is signed with a digital signature by the authority who issued the key.
+
+\subsubsection{Certificates Examples}
+As long as the issuing authority is trusted and the signature proves valid, the certificate and the key it contains can be relied upon.
+
+\subsubsection{Self-Signed vs CA-Issued Certificates}
+\begin{itemize}
+    \item Self-Signed
+        \begin{itemize}
+            \item Straightforward configuration through WebUI
+            \item ideal for lab environments or test beds
+            \item To avoid browser errors, users must trust each firewall certificate independently
+        \end{itemize}
+    \item CA-Issued Certificate
+        \begin{itemize}
+            \item More initial work and costs
+            \item Ideal for multibox deployments
+            \item Users need to trust only one certificate authority.
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Chain of Trust}
+Is a list of certificates used to authenticate a server or other entity.
+The chain begins with the server certificate.
+Each certificate in the chain is signed by the entity identified by the next certificate in the chain.
+The chain terminates with a \textit{root} CA certificate.
+
+\subsubsection{Certificated Configuration}
+The use of an existing CA ultimately simplifies deployment of SSL decryption:
+\begin{itemize}
+    \item Any environment running Microsoft AD or Novell eDirectory already has a certificate server available
+    \item The type of certificate needed for SSL decryption is subordinate CA certificate
+    \item This certificate needs to be in PEM format, with the certificate in one file and the private key in another.
+\end{itemize}
+
+Self-signed certificates can be generated easily using the WebUI:
+\begin{itemize}
+    \item All fields of the certificate should be filled in.
+    \item The name entered in this interface is the Publisher name on all decrypted certificates
+    \item If self-signed certificates are used for either the administrative WebUI or the SSL forward proxy, they can be exported from this page.
+    \item After the certificates are exported, they can be added to users' browsers to avoid warning messages about unknown publishers
+\end{itemize}
+When you generate a crtificate in the WebUI, you can choose 512, 1024, 2048, 3072, or 4096 as the Number of Bits. 
+
+\subsubsection{Certificate Signing Requests}
+The \textit{Generate} icon generates certificate signing requests (CSRs) if the Signed By field is set to External Authority (CSR)
+\begin{itemize}
+    \item A key pair is created on the machine and exported in PKCS10 format
+    \item The administrator then send the CSR to the CA, which generates the requested certificate
+    \item When the resulting certificate is received from the CA, import it with the same name as the CSR.
+    \item When the issued certificate is imported, the certificate signing request is removed and the certificate is added to the private key.
+\end{itemize}
+
+\subsubsection{Certificate Hierarchy}
+Device $\rightarrow$ Certificate Management $\rightarrow$ Certificates
+To aid in the management of certificates, PAN-OS software organizes the certificate listings as a tiered list.
+This format simplifies the process of determining which certificates are related by grouping certificates under their CA certificates on the system.
+Certificates issued by the firewall also can be revoked from this interface, if the Online Certificate Status Protocol is enabled.
+
+\subsubsection{Certificate Revocation}
+\begin{itemize}
+    \item Palo Alto Networks firewall devices can be configured to check whether a certificate has been revoked by the CA:
+        \begin{itemize}
+            \item CRL or OCSP can be used to verify certificate status for:
+                \begin{itemize}
+                    \item SSL/TLS decryption
+                    \item GlobalProtect
+                    \item Captive Portal
+                    \item IPSec VPNs
+                    \item MGT access
+                \end{itemize}
+        \end{itemize}
+    \item Certificate revocation list (CRL):
+        \begin{itemize}
+            \item Each CA issues a CRL listing to a public repository:
+                \begin{itemize}
+                    \item Revoked certificates listed by serial number
+                \end{itemize}
+            \item The Palo Alto Networks firewall downloads the CRL for every trusted CA.
+        \end{itemize}
+    \item Online Certificate Status Protocol (OCSP):
+        \begin{itemize}
+            \item Clients send the certificate serial number to the OSCP server to check status
+            \item The Palo Alto Networks firewall caches OCSP information for every listed CA.
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Other PAN-OS Features Using Certificates}
+\begin{itemize}
+    \item Management Interface Access
+    \item GlobalProtect:
+        \begin{itemize}
+            \item Portal
+            \item Gateway
+            \item Mobile Security Manager
+        \end{itemize}
+    \item Captive Portal
+    \item IPSec VPN IKE authentication
+    \item High Availability 
+    \item Secure syslog
+\end{itemize}
+
+\subsection{Outbound SSL Decryption}
+\subsubsection{Outbound SSL Inspection by a Forward Proxy}
+A firewall that is configured to decrypt SSL traffic going to external sites functions as a forward proxy.
+\textit{This process allows the firewall to sit in the middle of the two secure connections.}
+Be aware of these key points when you implement the forward SSL proxy:
+\begin{itemize}
+    \item The validity date on the firewall-generated certificate is taken from the validity date on the real server certificate.
+    \item The device acts as a proxy for the SSL connection, not the underlying traffic.
+    \item Packet capture (pcap) functionality executes before decryption.
+\end{itemize}
+
+\subsubsection{Forward Trust and Forward Untrust Certificates}
+With SSL forward proxy decryption, the firewall resideds between the internal client and outside server.
+The firewall uses \textit{forward trust or forward untrust certificates} to establish itself as a trusted third part to the session between the client and the server.
+If the server certificate is signed by a CA that the firewall trusts, the firewall creates a copy of the server certificate signed by the forward trust certificate and send the certificate to the client to authenticate.
+If the server certificate is signed by a CA that the firewall does not trusts, the firewall creates a copy of the server certificate and signs it with the forward untrust certificate and sends it to the client.
+ 
+\subsubsection{Configuring SSL Forward Proxy Decryption}
+\begin{itemize}
+    \item Configure a forward trust certificate:
+        \begin{itemize}
+            \item Use a self-signed certificate
+            \item Or use a certificate signed by an internal CA
+        \end{itemize}
+    \item Configure a forward untrust certificate:
+        \begin{itemize}
+            \item Use a self-signed certificate
+        \end{itemize}
+    \item Create a Decryption policy:
+        \begin{itemize}
+            \item Choose the URL categories to decrypt
+            \item Optional decryption profile
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Configure a Forward Trust Certificate}
+The \textit{forward trust certificate} is a CA cert that will sign the server cert sent to the client.
+This is configured under Device $\rightarrow$ Certificate Management $\rightarrow$ Certificates.
+If you generate a Forward trust certificate from the firewall, you need to make sure that it is created using the Certificate Authority check box.
+
+\subsubsection{Configure a Forward Untrust Certificate}
+The \textit{forward Untrust certificate} is used when the client browser should not trust the CA.
+This will cause a certificate warning to pop up on the client browser. This certificate is not stored in the client's trusted root certification authorities store.
+
+\subsubsection{Create a Decryption Policy}
+Policies $\rightarrow$ Decryption
+\begin{itemize}
+    \item Create granular rules for different services on the same host
+    \item Decrypt or not decrypt specific types of websites.
+\end{itemize}
+SSL decryption policies are similar to the other rule sets in PAN-OS
+\begin{itemize}
+    \item The rules are parsed from top to botton, comparing traffic to each rule in order.
+    \item When the traffic matches a particular rule, the actions defined are taken and no further rules are checked.
+\end{itemize}
+Support types of decryption policies:
+\begin{itemize}
+    \item \textbf{SSL Forward Proxy}: Decrypts client traffic destined for an external server.
+    \item \textbf{SSH Proxy}: Decrypts SSHv2 traffic, which allows you to control SSHv2 tunneling in policies by specifying the SSH-tunnel App-ID
+    \item \textbf{SSL Inbound Inspection}: Decrypt SSLs inbound inspection traffic
+\end{itemize}
+
+\subsubsection{Create the Security Policy Rules}
+After creating the Decryption rule, create the \textit{security policy rules} to enable the decryption.
+
+\subsubsection{Decryption Policy by URL Category}
+The \textit{SSL decryption policy} uses URL filtering to decide which traffic to decrypt or not decrypt:
+\begin{itemize}
+    \item User-ID or destination addresses can also be used for the decryption decision, but in practice the decision usually is made on the URL Filtering category of the destination address.
+    \item The destination IP address is compared because the URL is not visible.
+\end{itemize}
+
+\subsubsection{Decryption in the Traffic Log}
+The Decrypted column can be used to quickly show you which flows have been decrypted.
+
+
+\subsubsection{Recommended Ruleset}
+Rulebases are evaluated from top to bottom.
+Organizations may choose not to decrypt specific applications because they feel those destinations are trusted and pose less of a risk.
+
+
+\subsection{Inbound SSL Decryption}
+\subsubsection{Inbound SSL Inspection}
+The firewall can inspect secure inbound SSL traffic for potential external threats and control applications that run over secure channels.
+Before the firewall can inspect the traffic going to internal SSL servers, it needs a copy of the certificate and key of the internal server.
+The SSL decryption policy must be configured on the firewall to inspect the inbound traffic.
+
+\subsubsection{Configure SSL Inbound Inspection}
+\begin{itemize}
+    \item Device $\rightarrow$ Certificate Management $\rightarrow$ Certificates $\rightarrow$ Device Certificates
+    \item Create a decryption policy:
+        \begin{itemize}
+            \item Destination address: server address
+            \item Type: SSL Inbound Inspection
+            \item Certificate: Server Cert
+        \end{itemize}
+\end{itemize}
+
+\subsection{Other Decryption Topics}
+\subsubsection{Unsupported Applications}
+\begin{itemize}
+    \item Some applications may not work with forward proxy:
+        \begin{itemize}
+            \item Applications that use client-side certificates
+            \item Non-RFC-compliant applications
+            \item Servers using unsupported cryptographic settings
+        \end{itemize}
+    \item Applications that fail are cached and not decrypted for the next 12 hours:
+        \begin{itemize}
+            \item After 12 hours, the firewall tries to decrypt again
+        \end{itemize}
+    \item To see which sites have been excluded:
+        \begin{itemize}
+            \item $>$ show system setting ssl-decrypt exclude-cache
+        \end{itemize}
+    \item To manually add or delete sites from the ssl-decrypt settings:
+        \begin{itemize}
+            \item \# set shared ssl-decrypt ssl-exclude-cert foo.com
+            \item \# delete shared ssl-decrypt ssl-exclude-cert foo.com
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Decryption Profiles}
+Objects $\rightarrow$ Decryption Profile
+Policies $\rightarrow$ Decryption
+Some uses of SSL encryption may deviate enough from the SSL standard or typically available options such that they no loger work when decrypted with a Palo Alto Networks firewall:
+\begin{itemize}
+    \item Proprietary or non-standard encryption methods
+    \item Evasive applications
+    \item Client software coded to accept traffic from specific certificates
+\end{itemize}
+
+You can use the Decryption Profiles to:
+\begin{itemize}
+    \item Enforce the use of strong cipher suites for decrypted traffic, which includes support to specifically enforce the use of the Suite B Ciphers aes-128-gcm and aes-256-gcm
+    \item Enforce the use of minimum and maximum protocol versions
+    \item Enforce certificate validation on a per-policy basis
+    \item Define different traffic that you want to be decrypted using TCP port numbers, which enables you to apploy different decryption policies to the traffic of a single server. Traffic being transmitted using different protocols can receive treatment.
+\end{itemize}
+
+\subsubsection{No Decryption}
+You can use the No Deryption tab to block traffic that is matched to a decryption policy configured with \textit{no decrypt} action.
+Policies $\rightarrow$ Decryption $\rightarrow$ Action
+Use these options to control server certificates for the session, even though the firewall does not decrypt and inspect the session:
+\begin{itemize}
+    \item \textbf{Block sessions with expired certificates}: Terminate the SSL connection if the server certificate is expired. This action prevents a user from being able to accept an expired certificate and to continue with an SSL session. A Traffic log entry is generated.
+    \item \textbf{Block sessions with untrusted issuers}: Terminate the SSL session if the server certificate issuer is untrusted.
+\end{itemize}
+
+\subsubsection{Hardware Security Modules (HSMs)}
+\begin{itemize}
+    \item An HSM is a physical device that manage digital keys.
+    \item An HSM provides secure storage and generation of digital keys.
+    \item It provides logical and physical protection of these materials from non-authorized use and potential adversaries.
+\end{itemize}
+
+\subsubsection{HSM Support}
+\begin{itemize}
+    \item HSM devices:
+        \begin{itemize}
+            \item SafeNet Luna SA
+            \item Thales nShield Connect
+        \end{itemize}
+    \item HSM features:
+        \begin{itemize}
+            \item Forward proxy trust
+            \item SSL inbound inspection
+            \item Master key storage functions
+        \end{itemize}
+    \item PAN-OS platform:
+        \begin{itemize}
+            \item PA-3000 Series
+            \item PA-5000 Series
+            \item PA-7000 Series
+            \item PA-VM 100/200/300
+            \item Panorama Series Appliances
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Decryption Port Mirroring}
+This feature provides the ability to create a copy of decrypted traffic from a firewall and send it to a traffic collection tool such as NetWitness or Solera that can receive raw packet captures for archiving analysis.
+
+\subsubsection{Troubleshooting SSL Session Terminations}
+SSL sessions terminate due to a number of reasons, which may include:
+\begin{itemize}
+    \item Expired server certificates
+    \item Unsupported ciphers, SSH algorithms, or protocol versions
+    \item Untrusted certificate issuers
+    \item Unknown certificate status and timeout events
+\end{itemize}
+
+\subparagraph{decrypt-cert-validation:}An SSL session is terminated with this end reason attributed under one (or more) of the following scenarios:
+\begin{itemize}
+    \item Expired server certificate
+    \item Untrusted issuer
+    \item Unknown certificate status
+    \item Certificate status timeout
+    \item Client authentication
+\end{itemize}
+
+\subparagraph{decrypt-unsupport-param:}An SSL session is terminated with this end reason attribute under one (or more) of the following scenarios:
+\begin{itemize}
+    \item Unsupported protocol version
+    \item Unsupported cipher
+    \item Unsupported SSH algorithm
+\end{itemize}
+
+\subparagraph{decrypt-error:}An SSL session is terminated with this end reason attribute under one (or more) of the following scenarios:
+\begin{itemize}
+    \item Resources unavailable
+    \item HSM unavailable
+    \item SSH errors
+\end{itemize}

@@ -1,0 +1,552 @@
+\section{Management and Reporting}
+\subsection{Dashboard}
+\subsubsection{Introduction}
+Slide informing how to navigate.
+
+\subsubsection{Palo Alto Networks Firewall Dashboard}
+The Dashboard tab widgets show general device information, such as:
+\begin{itemize}
+    \item Software version
+    \item Operational status of each interface
+    \item Resource utilization
+    \item Up to 10 of the most recent entries in the threat.
+    \item Configuration
+    \item System logs
+\end{itemize}
+
+\subsubsection{System Widgets}
+\begin{itemize}
+    \item General Information displays:
+        \begin{itemize}
+            \item Device name
+            \item Software version
+            \item Application
+            \item Threat
+            \item URL filtering definition versions
+            \item Current date and time
+            \item Length of time since the last restart
+        \end{itemize}
+    \item Interfaces indicates the status of each interface:
+        \begin{itemize}
+            \item Green (up)
+            \item Red (down)
+            \item Gray (unknown state)
+        \end{itemize}
+    \item System Resources displays:
+        \begin{itemize}
+            \item Management CPU usage
+            \item Dataplane CPU usage
+            \item Session count, which displays the number of sessions established through the firewall
+        \end{itemize}
+    \item Logged in Admins displays:
+        \begin{itemize}
+            \item Source IP address
+            \item Session type (WebUI or CLI)
+            \item Session start time for each administrator currently logged in
+        \end{itemize}
+    \item High Availability indicates the HA status of the local and peer device:
+        \begin{itemize}
+            \item Green (active)
+            \item Yellow (passive)
+            \item Black (other), if HA is enabled
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Applications Widgets}
+ACC Risk Factor displays the average risk factor for the network traffic processed over the past week.
+\newline
+Top Applications display the applications with the most sessions:
+\begin{itemize}
+    \item The block size indicates teh relative number of sessions (mouse over the block to display the number), and the color indicates the security risk, from green (lowest) to red (highest).
+    \item Click an application to display its application profile.
+\end{itemize}
+
+\subsubsection{Log Widgets}
+Descriptions follow for the logs:
+\begin{itemize}
+    \item \textbf{Threat Logs:} Displays the threat ID, application, and date and time for the last 10 entries in the threat log. The threat ID is a malware description or URL that violates the URL Filtering profile
+    \item \textbf{URL Filtering Logs:} Displays the description and date and time for the last 60 minutes in the URL Filtering log.
+    \item \textbf{Data Logs:} Display the description and date and time for the last 60 minutes in the Data Filtering log.
+    \item \textbf{System Logs:} Displays the description and date and time for the last 10 entries in the System log.
+    \item \textbf{Config Logs:} Displays the administrator username, client (WebUI or CLI), and date and time for the last 10 entries in the configuration log.
+\end{itemize}
+
+\subsubsection{Application Command Center (ACC)}
+ACC uses the firewall logs to provide an interactive, graphical summary of the applications, users, URLs, threats, and content traversing the network.
+For a personalized view of your network, you also can add a custom tab and include widgets that allow you to look deeper into the information that is most important to you.
+\begin{itemize}
+    \item \textbf{Tabs:} The ACC includes three predefined tabs that provide visibility into network traffic, threat activity, and blocked activity. 
+    Each tab includes a default set of widgets that best represent the events/trends associated with the tab.
+    The widgets allow you to survey the data using filters such as bytes: in and out, sessions, content, and URL categories.
+    \item \textbf{Time:} The charts or graphs in each widget provide a real-time and historic view.
+    You can choose a custom range or use the predefined time periods that range from the last 15 minutes to the last 30 days or last 30 calendar days.
+    \item \textbf{Global Filters:} The global filters allow you to set the filter across all tabs.
+    The charts and graphs apply the selected filters before rendering the data.
+\end{itemize}
+
+\subsubsection{ACC Tabs}
+\begin{itemize}
+    \item \textbf{Network Activity:} An overview of traffic and user activity on your network.
+    \item \textbf{Threat Activity:} An overview of the top threats, such as vulnerabilities, spyware, and viruses.
+    \item \textbf{Blocked Activity:} Focuses on traffic that was prevented from coming into the network.
+    \item Make your own tab with whatever widgets you want using the plus sign.
+\end{itemize}
+
+\subsubsection{ACC Widgets}
+\begin{itemize}
+    \item \textbf{View:} Sort the data by:
+        \begin{itemize}
+            \item Bytes
+            \item Sessions
+            \item Threats
+            \item Count
+            \item Content
+            \item URLs
+            \item Malicious
+            \item Benign
+            \item Files
+            \item Data
+            \item Profiles
+            \item Objects
+        \end{itemize}
+    \item \textbf{Graph:} The graphical display options are
+        \begin{itemize}
+            \item Treemap
+            \item Line Graph
+            \item Horizontal Bar Graph
+            \item Stacked Area Graph
+            \item Map
+        \end{itemize}
+    \item \textbf{Table:} The detailed view of the data used to render the graph is provided in a table below the graph.
+    You can click any element in the table to set a local filter. The graph is updated and the table is sorted using the local filter.
+    \item \textbf{Actions:}
+        \begin{itemize}
+            \item \textit{Maximize view:} Allows you to enlarge the widget and display it in a larger screen space.
+            \item \textit{Set up local filters:} Allows you to add filters to refine the display within the widget.
+            \item \textit{Jump to logs:} Allows you to directly navigate to the logs (\textsc{Monitor $\rightarrow$ Logs $\rightarrow$ Log Type}). The logs are filtered using the time period for which the graph is rendered.
+            If you have set local and global filters, the log query concatenates the time period and the filters and displays only logs that match the combined filter set.
+            \item \textit{Export:} Allows you to export the graph as a PDF.
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Filters}
+\begin{itemize}
+    \item Local Filters
+    \item Global Filters
+        \begin{itemize}
+            \item You also can create global filters from a table.
+            \item You can promote a local filter to a global filter.
+            \item Define a filter using the Global Filters pane on the ACC.
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Session Browser}
+Select \textit{Monitor $\rightarrow$ Session Browser} to browse and filter sessions that are current on the firewall
+
+\subsection{Basic Logging}
+\subsubsection{Available Logs Files}
+\begin{itemize}
+    \item \textbf{Threat logs:} Record all traffic that causes the firewall to generate a security alarm
+    \item \textbf{URL Filtering logs:} Record all traffic that matches a URL Filtering Profile attached to a Security policy
+    \item \textbf{Config logs:} Record all changes to the firewall configuration.
+\end{itemize}
+
+\subsubsection{Log Types Review}
+\begin{itemize}
+    \item Traffic logs
+    \item Threat log
+    \item URL filtering
+    \item WildFire submissions
+    \item Data filtering
+    \item HIP match
+    \item Configuration
+    \item System
+    \item Alarms
+    \item Unified
+\end{itemize}
+
+\subsubsection{WildFire Submissions}
+\textit{Monitor $\rightarrow$ Logs $\rightarrow$ WildFire Submissions}
+\begin{itemize}
+    \item Logs files that are uploaded and analyzed by the WildFire cloud
+    \item Log data and analysis results are sent back to the Palo Alto Networks firewall after analysis
+\end{itemize}
+
+\subsubsection{Data Filtering}
+\textit{Monitor $\rightarrow$ Logs $\rightarrow$ Data Filtering}
+\begin{itemize}
+    \item Logs when security policies prevent sensitive information such as SSN from leaving protected area
+    \item Logs file-blocking security
+\end{itemize}
+
+\subsubsection{HIP Match}
+\textit{HIP Match} log shows Host Inspection Profile results for GlobalProtect users who are connecting through the firewall.
+\textit{Monitor $\rightarrow$ Logs $\rightarrow$ HIP Match}
+\begin{itemize}
+    \item Logs traffic flows that match configured HIP objects or HIP profiles:
+        \begin{itemize}
+            \item HIP object: Matching criteria for host such as:
+                \begin{itemize}
+                    \item Presence of antivirus software
+                    \item Domain membership
+                    \item Client OS
+                    \item Many other criteria
+                \end{itemize}
+            \item HIP profile: Collection of HIP objects
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Configuration}
+\textit{Monitor $\rightarrow$ Logs $\rightarrow$ Configuration}
+\newline
+The  \textit{Configuration Log} displays an entry for each configuration change. Each entry includes:
+\begin{itemize}
+    \item Date and time, administrator username
+    \item IP address from where the change was made
+    \item Type of Client (XML, WebUI, or CLI)
+    \item Type of command executed
+    \item Whether the command succeeded or failed
+    \item Configuration path
+    \item Values before and after the change
+\end{itemize}
+
+\subsubsection{System}
+\textit{Monitor $\rightarrow$ Logs $\rightarrow$ System}
+The \textit{System Log} displays an entry for each system event. Each entry includes:
+\begin{itemize}
+    \item Date and time
+    \item Event severity
+    \item Event description
+\end{itemize}
+
+\subsubsection{Alarms}
+\textit{Device $\rightarrow$ Log Settings $\rightarrow$ Alarms}
+\newline
+\begin{itemize}
+    \item log database growing too large
+    \item encryption/decryption errors,
+    \item too many denies for a specific IP address
+\end{itemize}
+
+\subsubsection{Enabling Alarm Settings}
+\textit{Device $\rightarrow$ Log Settings $\rightarrow$ Alarm Settings}
+\newline
+\begin{itemize}
+    \item Enable Alarms
+    \item Enable CLI Alarm Notifications
+    \item Enable Web Alarm Notifications: Will make alarms open in the web interface
+    \item Enable Audible Alarms: Will play a sound until the alarms are acknowledged
+\end{itemize}
+
+\subsubsection{Define What Will Cause an Alarm}
+\textit{Device $\rightarrow$ Log Settings $\rightarrow$ Alarm Settings}
+\begin{itemize}
+    \item Encryption/decryption errors
+    \item Log database growing to precentage of the maximum
+    \item More than $<threshold>/<time>$ denies by a Security rule for an IP address
+    \item More than $<threshold>/<time>$ denies by a group of security policies for an IP address; identified by a tag.
+\end{itemize}
+
+\subsubsection{Systems Alarms Window}
+\begin{itemize}
+    \item When alarms are enabled, the Alarms icon appears in the bottom right corner
+    \item These same alarms appear in the Alarms log.
+\end{itemize}
+
+\subsubsection{Unified Log}
+\textit{Monitor $\rightarrow$ Log $\rightarrow$ Unified}
+\newline
+The firewall provides a single \textit{Unified log} set that enables you to monitor and filter events regardless of log type.
+The new unified log set includes:
+\begin{itemize}
+    \item Traffic
+    \item Threat
+    \item URL Filtering
+    \item WildFire Submissions
+    \item Data Filtering
+\end{itemize}
+
+Unified logs does not include:
+\begin{itemize}
+    \item Configuration
+    \item System
+    \item HIP Match
+    \item Alarm log entries
+\end{itemize}
+
+\subsubsection{Log Management}
+\textit{Device $\rightarrow$ Log Settings}
+\newline
+Logs can be manually cleared from the Device tab. When an administrator clears the logs, the event is recorded in the System log.
+This action is not reversible and the information is lost permanently unless the log has been exported first.
+\newline
+\textit{Device $\rightarrow$ Setup $\rightarrow$ Management $\rightarrow$ Logging and Report Settings}
+The amound of space allocated to each log type is configurable. 
+
+\subsubsection{AutoFocus Integrates with Log Files}
+\textit{Monitor $\rightarrow$ Logs}
+\newline
+Provides risk analysis for firewall events and to place those events within global, industry, and network contexts.
+AutoFocus is a subscription service and is available for the traffic log entries:
+\begin{itemize}
+    \item Traffic
+    \item Threat
+    \item URL Filtering
+    \item WildFire Submissions
+    \item Data Filtering
+    \item Unified
+\end{itemize}
+
+\subsubsection{AutoFocus Threat Intelligence Summary}
+\begin{itemize}
+    \item AutoFocus Search Link
+    \item Passive DNS
+    \item Matching Tags
+    \item Associated Sessions
+    \item WildFire Verdicts
+    \item Recent WildFire Results
+\end{itemize}
+
+\subsubsection{Log Storage Settings}
+\textit{Device $\rightarrow$ Setup $\rightarrow$ Logging and Reporting Settings}
+\newline
+Logs can be automatically purged after a set number of days.
+
+\subsection{Viewing and Filtering Logs}
+\subsubsection{Constructing a Log Filter}
+Click any underlined link in the log listing to add that item as a log filter option. 
+\subsubsection{Constructing a Log Filter (Cont.)}
+\textit{Monitor $\rightarrow$ Logs $\rightarrow$ Traffic}
+The search will find entries that match both (therefore it is an AND search).
+
+\subsubsection{Filter Buttons}
+Click \textit{Apply Filter} to display the filtered list.
+To clear filters and redisplay the unfiltered list, click \textit{Clear Filter}
+To save selections as new filter, click \textit{Save Filter}, enter a name for the filter, and click \textit{OK}
+\subsubsection{Add Log Filter}
+The filter bar allows administrators to display only the lines in the log that match specified criteria.
+
+\subsubsection{Saving and Loading Filters}
+Click \textit{Load} and then click the filter to delete it.
+
+\subsection{Basic Reports}
+\subsubsection{App-Scope Reports}
+\begin{itemize}
+    \item Provides visibility and analysis tools to help pinpoint problematic behavior:
+        \begin{itemize}
+            \item Changes in application usage and user activity
+            \item Users and applications that take up most of the network bandwidth
+            \item Network threats
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{App-Scope}
+\begin{itemize}
+    \item Summary
+    \item Change Monitor
+    \item Threat Monitor
+    \item Threat Map
+    \item Network Monitor
+    \item Traffic Map
+\end{itemize}
+
+\subsubsection{Reports}
+\begin{itemize}
+    \item Predefined reports:
+        \begin{itemize}
+            \item Over 40 reports including Applications, Traffic, Threat, and URL Filtering
+        \end{itemize}
+    \item Custom reports:
+        \begin{itemize}
+            \item With Query Builder
+        \end{itemize}
+    \item User or group-activity reports:
+        \begin{itemize}
+            \item Including URL categories and browse-time calculations
+        \end{itemize}
+    \item Botnet reports:
+        \begin{itemize}
+            \item Behavior-based mechanisms to identify potential infected hosts
+        \end{itemize}
+    \item PDF Summary reports:
+        \begin{itemize}
+            \item Aggregate reports
+        \end{itemize}
+    \item Report groups:
+        \begin{itemize}
+            \item Compile reports into a single emailed PDF
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Predefined Reports}
+The firewall provides various "top 50" reports of the traffic statistics for the previous day or for a selected day in the previous week.
+
+\subsubsection{Predefined Reports (Cont.)}
+To disable any of the predefined reports, go to \textit{Device $\rightarrow$ Setup $\rightarrow$ Management $\rightarrow$ Logging and Reporting Settings}
+
+\subsubsection{Custom Reports}
+\textit{Monitor $\rightarrow$ Manage Custom Reports}
+
+\subsubsection{Custom Report Settings}
+\textbf{Match} \textbf{Sort} \textbf{Group}
+\begin{itemize}
+    \item Database:
+        \begin{itemize}
+            \item Summary databases:
+                \begin{itemize}
+                    \item For traffic, threat, and application statistics
+                    \item Condensed
+                \end{itemize}
+            \item Detailed logs:
+                \begin{itemize}
+                    \item Not recommended
+                \end{itemize}
+        \end{itemize}
+    \item Attributes:
+        \begin{itemize}
+            \item Match criteria
+        \end{itemize}
+    \item Sort by/group by:
+        \begin{itemize}
+            \item Sort By option specifies the attribute that is used for aggregation
+            \item Group By option allows you to select an attribute and use it as an anchor for grouping data
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Sort and Group Example}
+You can see that this report is set to match on the App Category, Sub Category, Risk and session values.
+It has five groups that are grouped by day and sorted by session using only the top 5 sessions.
+
+\subsubsection{Query Builder}
+The \textit{Query Builder} allows you to define specific queries to further refine the selected attributes.
+Queries enable the generation of a more focused collation of information in a report.
+
+\subsection{Panorama}
+\subsubsection{Panorama Benefits Overview}
+\textit{Panorama} is a centralized security management system that provides global control over a network of Palo Alto Networks next-generation firewalls. Panorama is designed to provide three benefits:
+\begin{itemize}
+    \item Centralized configuration and deployment:
+        \begin{itemize}
+            \item Create a template to apply a base configuration
+            \item Put firewalls into device groups
+            \item Administer globally shared and local policies and objects
+            \item Manage firewall software and content updates
+            \item Collect activity information from all firewalls
+        \end{itemize}
+    \item Aggregated logging with central oversight for analysis and reporting:
+        \begin{itemize}
+            \item Analyze on the data
+            \item Investigate on the data
+            \item Report on the data
+        \end{itemize}
+    \item Distributed administration:
+        \begin{itemize}
+            \item Delegate or restrict access to global and local firewall configuration and policies.
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Centralized Configuration and Deployment}
+\begin{itemize}
+    \item Device groups:
+        \begin{itemize}
+            \item Group together firewalls that require similar configurations
+            \item Manage shared policies and shared objects
+        \end{itemize}
+    \item Templates:
+        \begin{itemize}
+            \item Define network and device base configurations
+            \item Push the base configurations to firewalls
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Centralized Software Deployment}
+To keep the managed firewalls as isolated as possible, a Panorama device can be configured to download updates from Palo Alto Networks for redistribution to its managed devices.
+
+\subsubsection{Centralized Logging and Reporting}
+\textit{Panorama} aggregates data from all managed firewalls and provides:
+\begin{itemize}
+    \item Visibility across all the traffic on the network
+    \item An audit trail for all policy modifications and configuration changes.
+    \item Forwarding for SNMP traps, email notifications, and syslog messages.
+    \item The Panorama Application Command Center and App-Scope application provide a single pane for unified reporting across all the firewalls.
+\end{itemize}
+
+\subsubsection{Panorama Reports}
+\begin{itemize}
+    \item Predefined reports:
+        \begin{itemize}
+            \item Applications, threats, URL filtering, and traffic
+            \item In the user-activity reports
+            \item On-demand report to document the application use and URL activity broken down by URL category for a specific user with estimated browse-time calculations
+        \end{itemize}
+    \item Custom reports:
+        \begin{itemize}
+            \item Query data from a summary database on Panorama, or on remote devices.
+        \end{itemize}
+    \item PDF summary reports:
+        \begin{itemize}
+            \item Aggregate up to 18 predefined reports, graphs, and custom reports into one PDF.
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Automated Correlation Engine}
+\begin{itemize}
+    \item Analyzes firewall logs to detect likely network attacks.
+    \item Pinpoints compromised hosts.
+    \item Correlation objects:
+        \begin{itemize}
+            \item Defines patterns to match against suspicious traffic patterns and network anomalies, including suspicious IP activity, know command-and-control activity, known vulnerability exploits, and botnet activity.
+            \item Defines logs to examine
+            \item Defines a time period to test
+        \end{itemize}
+    \item Correlation Events: Events that match a correlation object
+\end{itemize}
+
+\subsubsection{Correlation Objects}
+\textit{Monitor $\rightarrow$ Automated Correlation Engine $\rightarrow$ Correlation Objects}
+\newline
+\begin{itemize}
+    \item Grouping event sets together across datasets and over time.
+    \item Correlation objects are defined by Palo Alto Networks and are distributed with content updates
+\end{itemize}
+
+\subsubsection{Correlation Events}
+\textit{Monitor $\rightarrow$ Automated Correlation Engine $\rightarrow$ Correlation Events}
+\newline
+\textit{Correlation events} are logged when traffic matches a Correlation object.
+
+\subsubsection{Log Forwarding}
+\begin{itemize}
+    \item Configure firewalls to forward logs to Panorama
+    \item Panorama also can forward to an external service
+    \item Send logs immediately or as aggregations
+    \item ACC and custom reports do not require log forwarding
+\end{itemize}
+
+\subsubsection{Panorama Distributed Architecture}
+Logging and reporting is resource-intensive for firewalls and Panorama:
+\begin{itemize}
+    \item \textit{Distributed Log Collection} offloads firewalls and Panorama by providing additional resources to manage the logs.
+    \item The Log Collectors are organized into groups where each group is assigned a set of firewalls as a log forwarding target.
+    \item Each Log Collector group provides log replication within the group for the firewalls.
+    \item Panorama centrally manages Log Collectors and Log Collector groups.
+    \item Panorama queries all the collector groups to provide aggregated viewing of reports and log viewers.
+\end{itemize}
+
+\subsubsection{Role-Based Access Control}
+\textit{Panorama $\rightarrow$ Access Domains}
+\newline
+An access domain can be configured to limit which device groups, templates, and contexts Panorama administrators are permitted to access.
+Panorama administrators can set granular access to each device under Panorama management by using the Access Domain page on the Panorama tab to specify domains for administrator access to device groups, templates, and devices:
+\begin{itemize}
+    \item When you add a device group, template, or device to an access domain, you can manage configurations for that object.
+    \item Administrators who log in can do a context switch only to the devices and/or virtual systems to which they have access.
+    \item An external authentication server such as RADIUS can be used to control access to access domains.
+    \item Logs and report data are filtered based on assigned access domains.
+\end{itemize}
+
+\subsubsection{Migration Tool}
+\begin{itemize}
+    \item Integrates with PAN-OS software for firewall and Panorama
+    \item Helps convert configurations from traditional firewalls into Palo Alto Networks net-generation App-ID configuration.
+\end{itemize}

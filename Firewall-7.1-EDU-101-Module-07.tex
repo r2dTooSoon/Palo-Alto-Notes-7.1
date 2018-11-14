@@ -1,0 +1,160 @@
+\section{File Blocking and WildFire}
+\subsection{File Blocking Concepts}
+\subsubsection{Introduction}
+\textbf{File blocking} enables the blocking of prohibited, malicious, and suspect files from being downloaded - and/or uploaded - to protect users, their devices, and of course the corporate network.
+
+\subsubsection{File-Blocking Configuration}
+The available actions for File Blocking profiles
+    \begin{itemize}
+        \item \textbf{Alert}: Allows the file transfer to continue but adds an alert to the URL log
+        \item \textbf{Block}: Traffic is blocked, a block log entry is generated, and a response page is sent to the user's browser if the traffic is web-based.
+        \item \textbf{Continue}: Sends a response page requiring the user to click Continue to proceed, and will log the action
+    \end{itemize}
+
+\subsubsection{File-Block Configuration: Multilevel Encoding}
+By default, four levels of decoding protection are in PAN-OS 7.0
+Create the File Blocking profile set the file type to \textit{Multi-Level-Encoding} with the action set to \textit{Block}
+Supported encoding methods include the following:
+    \begin{itemize}
+        \item Gzip
+        \item Pkzip
+        \item Chunked encoding
+        \item Base64 encoding
+        \item Uuencode
+        \item Qpencode
+    \end{itemize}
+\subsubsection{Drive-By Download Protection}
+The File Blocking Profile looks within the application session, sees that a download is taking place, and verifies with the user if the file is an approved download.
+\subsubsection{Data Filtering Log}
+Allows administrators to monitor firewall interactions with WildFire.
+    \begin{itemize}
+        \item \textbf{wildfire-upload-success}: the file was actually sent to the cloud;
+        this means the file is not singed by a trusted file signer and it has not yet been seen by WildFire
+        \item \textbf{wildfire-upload-skip}: the file was not uploaded because it was seen by WildFire before,
+        and it was determined to be malware. This will generate a WildFire report.
+    \end{itemize}
+
+\subsection{WildFire Platform}
+\subsubsection{Introduction}
+    \begin{itemize}
+        \item Ready for front-line deployment
+        \item True enforcement
+        \item Superior analysis
+        \item Scalability
+        \item Three solutions:
+            \begin{itemize}
+                \item WildFire Public Cloud
+                \item WF-500 Private Appliance
+                \item WildFire Hybrid Cloud
+            \end{itemize}
+    \end{itemize}
+\subsubsection{WildFire Cloud}
+Makes use of your on-premises firewalls in conjunction with the Palo Alto Networks cloud-based analysis engine to deliver an ideal blend of protection and performance. 
+
+\subsubsection{Signature Generation Capabilities on the WF-500 Appliance}
+\begin{itemize}
+    \item Generate local malware and command and control (C2) signatures directly on the WildFire appliance
+    \item Provides three types of protection
+        \begin{itemize}
+            \item \textbf{Antivirus signatures}: Prevent malware downloads
+            \item \textbf{DNS signatures}: Block C2 traffic
+            \item \textbf{URL malware categorization}: Block C2 traffic
+        \end{itemize}
+    \item Distribute local WF-500 signatures to all PAN-OS firewalls across the network for consistent network protection
+    \item Signatures updated every 5 minutes
+\end{itemize}
+
+\subsubsection{WildFire Subscription Service}
+Provides enhanced services for organizations that require immediate coverage for threats, frequent WildFire signature updates, advance file type forwarding, and the ability to upload using the WildFire API.
+
+\subsubsection{Identify and Protect Against Malicious Email Links}
+When a malicious link is detected, a log is generated for the malicious email that indicates the sender, receiver, and subject for quick identification.
+
+\subsubsection{Email Header Information}
+The firewall captures email header information that includes the sender, the recipient(s), and the subject fields,
+This header information is sent to WildFire along with the corresponding email attachment(s) and any link(s) within the email. 
+
+\subsubsection{Configuring WildFire}
+\textbf{Device $\rightarrow$ Setup}
+Default file sizes are:
+    \begin{itemize}
+        \item flash = 5MB
+        \item apk = 10MB
+        \item pdf = 200KB
+        \item jar = 1MB
+        \item pe = 2MB
+        \item ms-office = 500KB
+    \end{itemize}
+
+\subsubsection{Security Profile: WildFire Analysis}
+\textbf{Objects $\rightarrow$ Security Profile $\rightarrow$ WildFire Analysis}
+\newline
+Allows for the configuration of where files will be sent.
+
+\subsubsection{Security Profile: WildFire Analysis (con't)}
+    \begin{itemize}
+        \item Create the new WildFire Analysis Profile object and set the file types, applications, direction, and analysis location
+        \item Attach this new WildFire Analysis Profile object to a Security policy rule.
+    \end{itemize}
+
+\subsubsection{WildFire Dashboard}
+The portal opens to display the dashboard, which lists summary report information for all of the firewalls associated with specific WildFire account or Support account.
+The display includes the number of analyzed files and indicates how many are infected with malware, are benign, or are pending analysis.
+
+\subsubsection{WildFire Dashboard Reports}
+To display the list of available reports, click \textit{Reports} button.
+
+\subsubsection{WildFire Submissions Log}
+\textbf{Monitor $\rightarrow$ Logs $\rightarrow$ WildFire Submissions}
+
+\subsection{WildFire Analysis}
+\subsubsection{WildFire Analysis Verdicts}
+    \begin{itemize}
+        \item Benign
+            \begin{itemize}
+                \item Files categorized as benign are safe and do not exhibit malicious behavior
+            \end{itemize}
+        \item Grayware
+            \begin{itemize}
+                \item Files categorized as grayware do not pose a direct security threat, but might display otherwise obtrusive behavior
+                \item Grayware can include
+                    \begin{itemize}
+                        \item adware
+                        \item spyware
+                        \item browser helper objects
+                    \end{itemize}
+            \end{itemize}
+        \item Malware
+            \begin{itemize}
+                \item Files categorized as malware are malicious in intent or nature and can pose a security threat.
+                \item Malware can include:
+                    \begin{itemize}
+                        \item viruses
+                        \item worms
+                        \item trojans
+                        \item remote access tools
+                        \item rootkits
+                        \item botnets
+                    \end{itemize}
+            \end{itemize}
+    \end{itemize}
+
+
+\subsubsection{WildFire Analysis Verdict Example}
+The public cloud and the WildFire appliance are supported, and all firewall platforms are supported.
+When files are identified as malware, a signature is generated and distributed by the WildFire cloud to prevent future exposure.
+
+\subsubsection{Report Incorrect Verdict}
+If you think that a file was incorrectly categoriezed, you can report it from within PAN-OS software.
+
+\subsubsection{WildFire Portal: Incorrect Verdict}
+WildFire reports indicate whether a file was benign, grayware, or malware. As an administrator, you can resubmit a file if you think that this determination is incorrect. 
+Find the link at the bottom of the report itself from within the portal or from the WildFire Analysis report in PAN-OS software.
+
+\subsubsection{WildFire Settings}
+The WildFire grayware analysis result was introduced to clearly identify executables that behave similarly to malware but are not malicious in nature or intent.
+The grayware verdict allows the security responder to quickly distinguish malicious files on the network from grayware and to prioritize accordingly.
+Though antivirus signatures are not generated for grayware, WildFire logs can continue to alert the security responder to endpoints that download grayware to assess if such events are of concern.
+
+\subsubsection{Log Forwarding of WildFire Verdicts}
+Forward WildFire verdicts to Panorama or to other external systems or services.

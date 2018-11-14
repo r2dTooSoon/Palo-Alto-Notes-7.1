@@ -1,0 +1,329 @@
+\section{Site-to-Site VPNs}
+\subsection{Site-to-Site VPN}
+\subsubsection{Introduction}
+\begin{itemize}
+    \item VPNs allow systems to connect securely over a public network as if they were connecting over a LAN.
+    \item The IPSec set of protocols is used to set up a secure tunnel for the VPN traffic, and the private information in the TCP/IP packets are encrypted when sent through the IPSec tunnel.
+    \item The Palo Alto Networks GlobalProtect solution also can configure IPSec VPNs and SSL VPNs. SSL-VPNs allow remote users to establish VPN connections through the firewall.
+\end{itemize}
+
+\subsubsection{Site-to-Site Overview}
+\begin{itemize}
+    \item PAN-OS software implements route-based IPSec VPNs:
+        \begin{itemize}
+            \item Traffic is tunneled based on the destination of traffic
+            \item Policy-based systems match the traffic based on source and destination addresses, and on service (port)
+        \end{itemize}
+    \item The tunnel is represented by a logical tunnel interface:
+        \begin{itemize}
+            \item The tunnel interface is placed within a zone.
+        \end{itemize}
+    \item The routing table chooses the tunnel settings
+    \item Multiple versions of IKE are supported:
+        \begin{itemize}
+            \item IKEv1
+            \item IKEv2
+        \end{itemize}
+\end{itemize}
+The firewall also can interoperate with third-party, policy-based VPN devices:
+\begin{itemize}
+    \item When a system receives traffic destined for a remote private network, it looks up the next hop in the routing table, which is the standard procedure for traffic from another network.
+    \item In the case of a remote network, the routing table points to a logical tunnel interface.
+    \item The tunnel interface is not a real physical interface, but has all of the required information for the creation of an IPSec tunnel.
+    \item When traffic is sent to the tunnel interface, the VPN is created and the traffic is forwarded through it.
+\end{itemize}
+
+\subsubsection{Phase 1: IKE}
+\begin{itemize}
+    \item IKE Phase 1 identifies the endpoints of VPN
+    \item IKE Phase 1 uses peer IDs to identify the devices:
+        \begin{itemize}
+            \item For devices with known, addresses, the peer ID is usually the IP address
+            \item A peer ID also can be a domain name or other string.
+        \end{itemize}
+    \item Three setting (modes):
+        \begin{itemize}
+            \item Aggressive
+            \item Main
+            \item Auto
+        \end{itemize}
+\end{itemize}
+
+Five pieces of information are passed during IKE Phase 1:
+\begin{itemize}
+    \item Authentication method
+    \item Diffie-Hellman key exchange
+    \item Symmetric Key Algorithm - Bulk Data Encryption
+    \item Hashing algorithm
+    \item Lifetime
+\end{itemize}
+
+\subsubsection{Phase 2: IPSec}
+\begin{itemize}
+    \item IKE Phase 2 defines connected private networks and creates the tunnel.
+    \item Each side of the tunnel has a proxy ID to identify traffic:
+        \begin{itemize}
+            \item Support for multiple proxy IDs
+        \end{itemize}
+    \item Networks are identified by proxy ID and can be either:
+        \begin{itemize}
+            \item Masked network (e.g., 10.2.0.0/24)
+            \item Any network (0.0.0.0/0)
+            \item Perfect forward secrecy uses a second DH key exchange.
+        \end{itemize}
+\end{itemize}
+
+Five pieces of information are passed during Phase 2 IPSec:
+\begin{itemize}
+    \item IPSec type/mode
+    \item Diffie-Hellman: PFS
+    \item Symmetric Key Algorithm - Bulk Data Encryption
+    \item Hashing algorithm
+    \item Lifetime (before rekey)
+\end{itemize}
+
+\subsubsection{Route-Based Site-to-Site VPN}
+Before you can set up VPNs, you must understand your network topology and be able to determine the required number of tunnels. For example:
+\begin{itemize}
+    \item A single VPN tunnel may be sufficient for connecting between a single central site and a remote site.
+    \item Connections between a central site and multiple remote sites require VPN tunnels for each central-remote site pair.
+\end{itemize}
+
+\textit{Note: The error messages for failed connections will be displayed \textsc{only} within the system log of the responding firewall.}
+
+\subsubsection{VPN Tunnel Component Interaction}
+The tree basic requirements for creating a VPN in PAN-OS software are as follows:
+\begin{itemize}
+    \item Create the tunnel interface:
+        \begin{itemize}
+            \item Interface configuration can be performed in the WebUI by selecting \textit{Network $\rightarrow$ Interfaces $\rightarrow$ Tunnel}
+            \item The new logical interface must be added to a Layer 3 zone and to a virtual router, just as any other logical Layer 3 interface would be handled.
+        \end{itemize}
+    \item Configure the IPSec tunnel:
+        \begin{itemize}
+            \item You can use the basic interface when you create a tunnel between PAN-OS devices with known IP addresses
+            \item The only values needed are the tunnel interface to use, the local peer ID, the remote peer ID, and the pre-shared key (PSK).
+            \item \textbf{Note:} The IKE gateway, the IKE crypto profile, and the IPSec crypto profile are confiugred during the setup of the IPSec tunnel.
+            \item If the configuration is site-to-site with another Palo Alto Networks firewall, use the default crypto profiles.
+            \item If the configuration is site-to-site with a different vendor's firewall, confugre the advanced settings in the crypto profiles to match.
+        \end{itemize}
+    \item Add a static route to the virtual router or enable an applicable routing protocol (OSPF,RIP, or BGP):
+        \begin{itemize}
+            \item Add a route table entry for the remote network that points to the tunnel interface used in Steps 1 and 2.
+            \item Create a route for the remote network using the tunnel interface.
+            \item No next-hop IP address is required when tunnel interfaces are used.
+            \item Be sure to create a security rule to allow tunneled traffic.
+        \end{itemize}
+\end{itemize}
+
+\subsection{Configuring Site-to-Site Tunnels}
+\subsubsection{VPN Tunnel Interface}
+Network $\rightarrow$ Interfaces $\rightarrow$ Tunnel Tab
+\newline
+A \textit{tunnel interface} is a logical Layer 3 interface.
+Each tunnel interface represents a specific VPN configuration.
+Any traffic that is routed to this interface according to the configuration of the IPSec VPN object associated with the tunnel interface.
+
+\subsubsection{IKE Gateway Configuration}
+Network $\rightarrow$ Network Profiles $\rightarrow$ IKE Gateways 
+\newline
+For simple deployments (e.g., tunnels between Palo Alto Networks devices), only the interface, IP addresses, and PSK must be specified.
+IKE certificate-based authentication often is required in VPN replacements where partner sites require cert-authentication.
+The next-generation firewall can use IKE PKI certificate authentication for IP site-to-site VPNs.
+\newline
+
+Supported ID types are as follows:
+\begin{itemize}
+    \item \textbf{IP address:} IPAddress from SubjectAltName extension
+    \item \textbf{FQDN:} DNSName from SubjectAltName extension
+    \item \textbf{Email address:} User FQDN, rfc822Name from SubjectAltName extension
+    \item \textbf{Distinguished Name (DN):} Cert subject field, supports multiple OU fields.
+        \begin{itemize}
+            \item Sends the entire DN when DN is used as local ID type
+            \item DN as the ID type if the certificate's DN field is empty is not permitted
+            \item Conforms to RFCs 4945 and 2409
+        \end{itemize}
+\end{itemize}
+IKE PKI feature limitations as follows:
+\begin{itemize}
+    \item Maximum level for the certificate chain is 5 (number of CA certificates including trusted CA). If the level is exceeded, the error "certificate chain too long" is returned and the certificate chain build fails.
+    \item CRL over LDAP is not supported.
+    \item All IKE gateways configured on the same interface or local IP address must use the same crypto profile, and the peer ID must be different.
+    \item Authentication using Public Key Encryption and Public Key Encryption revised mode are not currently supported.
+\end{itemize}
+
+\subsubsection{IKE Gateway Configuration (Cont.)}
+Network $\rightarrow$ Network Profiles $\rightarrow$ IKE Gateways $\rightarrow$ Advanced Options
+\newline
+The administrator can use the \textit{Advanced Options} tab to set all aspects of the IKEv1 Phase 1 connection:
+\begin{itemize}
+    \item \textbf{Enable Passive Mode:} Check to have the firewall respond only to IKE connections and to never initiate them.
+    \item \textbf{Enable NAT Traversal:} Check to have UDP encapsulation used on IKE and UDP protocols, which enables them to pass through intermediate NAT devices.
+    Enable NAT Traversal if NAT is configured on a device between the IPSec VPN terminating points
+    \item \textbf{Exchange Mode:} Select auto, aggressive, or main. In auto mode (default), the device can accept main mode and aggressive mode negotiation requests.
+    However, whenever possible, it initiates negotiation and allows exchanges in main mode. You must configure the peer device with the same exchange mode to allow it to accept negotiation requests initiated from the first device.
+    \item \textbf{IKE Crypto Profile:} Custom crypto profiles can be configured under the IKE Crypto Profile setting.
+    \item \textbf{Enable Fragmentation:} Check to allow the local gateway to receive fragmented IKE packets.
+    The maximum fragmented packet size is 576 bytes.
+    \item \textbf{Dead Peer Detection:} Select to enable and enter an interval (2 to 100 seconds) and delay before retrying (2 to 100 seconds.)
+    Dead peer detection identifies inactive or unavailable IKE peers and can help restore resources that are lost when a peer is unavailable.
+\end{itemize}
+
+\subsubsection{IKE Fragmentation Support}
+\begin{itemize}
+    \item Ensures that the IKE initiator and receivers properly negotiate IKE fragmentation
+    \item Ensures that IKE receivers can reassemble IKE fragmentation packets
+    \item Maximum fragmented packet size is 576 bytes
+\end{itemize}
+
+Considerations and platform support are as follows:
+\begin{itemize}
+    \item Performance is the same as with pre-shared key, after the tunnel has been established.
+    \item Total number of IKE gateways is 1,000 on all platforms.
+    \item All firewall platforms are supported.
+    \item Panorama templates are supported.
+    \item IKE fragmentation support is limited to only main mode.
+\end{itemize}
+
+\subsubsection{IKE Cryptographic Profiles}
+Network $\rightarrow$ Network Profiles $\rightarrow$ IKE Crypto
+\newline
+In \textit{IKE Phase 1}, several possible cryptographic options can be chosen:
+\begin{itemize}
+    \item Both sides of the tunnel must be able to agree on the same settings for all Phase 1 options for the Phase 1 security association to be successful.
+    \item Multiple options can be selected for each of the DH Group, Encryption, and Authentication settings.
+    \item The panels show only the option selected by the administrator, even if more are available.
+    \item Click \textit{Add} to specify which methods will be attempted
+    \item To change the order in which an algorithm or group is listed, select the item and click the arrow icons in the panel.
+    The listed order determines the order in which the algorithms are applied, and can affect tunnel performance.
+\end{itemize}
+Supported hashes include:
+\begin{itemize}
+    \item md5
+    \item sh1
+    \item sha256
+    \item sha384
+    \item sha512
+\end{itemize}
+
+\subsubsection{IPSec Tunnel}
+Network $\rightarrow$ IPSec Tunnel
+\newline
+\textit{IKE Phase 2} negotiations determine the type of IPSec used and the internal networks that will connect using the tunnel.
+Tunnel monitoring can be enabled if the underlying tunnel interface has been configured with an IP address. 
+This feature sends ping traffic through the tunnel to verify full connectivity. 
+If tunnel monitoring is used, one of two modes is set by the profile:
+\begin{itemize}
+    \item \textbf{wait recover:} If the remote IP is not reachable, the firewall continuously sends ping requests over the tunnel in an attempt to see if the destination IP becomes reachable. 
+    If the IP address is reachable, traffic routes across the tunnel again.
+    \item \textbf{fail-over:} Traffic fails over to a backup path, if one is available, If no alternate route is available, the traffic is dropped.
+\end{itemize}
+
+\subsubsection{IPSec Cryptographic Profiles}
+Use \textit{Network $\rightarrow$ Network Profiles $\rightarrow$ IPSec Crypto} profile page to specify protocols and algorithms for identification, authentication, and encryption in VPN tunnels based on IPSec negotiation:
+\begin{itemize}
+    \item Multiple options can be selected for each of the DH Group, Encryption, and Authentication settings.
+    \item The panels show only the option selected by the administrator, even if more are available
+    \item Click \textit{Add} to specify which methods are attempted.
+    \item To change the order in which an algorithm or group is listed, select the item and click the arrow icons in the panel.
+    \item The listed order determines the order in which the algorithms are applied, and can affect tunnel performance.
+\end{itemize}
+
+\subsubsection{IPSec Tunnels}
+Network $\rightarrow$ IPSec Tunnel $\rightarrow$ Proxy IDs
+\newline
+Palo Alto Networks implements route-based VPNs, so the default protected network IDs, or proxy IDs, are 0.0.0.0/0.
+To aid in interoperability with third-party VPN solutions, the default proxy IDs may be replaced with one or more network strings.
+
+\subsubsection{Static Route for VPN}
+Network $\rightarrow$ Virtual Routers $\rightarrow$ Add $\rightarrow$ Static Routes $\rightarrow$ IPv4
+\begin{itemize}
+    \item The static route must use the tunnel interface.
+    \item Next hop is not required
+\end{itemize}
+The last step is to add the route table entry for the tunnel:
+\begin{itemize}
+    \item The entry is static route for the remote private network.
+    \item This route should point to the tunnel interface.
+    \item No other configuration in the virtual router is required.
+    \item This step is not required if dynamic routing is configured on the tunnel interface.
+\end{itemize}
+
+\subsubsection{IPv6 IPSec VPN}
+\begin{itemize}
+    \item IPv6 site-to-site VPN tunnels:
+        \begin{itemize}
+            \item IKEv1 and IKEv2 Phase 1
+            \item IPv4 and IPv6 traffic over IPv6 tunnel
+            \item IPv4 and IPv6 Proxy IDs
+        \end{itemize}
+    \item Benefits:
+        \begin{itemize}
+            \item IPv6-only sites/partners
+            \item Complicance (government, military, healthcare, etc)
+            \item Suite B (DH 19/20 and AES GCM
+        \end{itemize}
+    \item Feature specifics:
+        \begin{itemize}
+            \item Restart/refresh IPSec or IKE Phase 1
+                \begin{itemize}
+                    \item Restarting IKEv2 SA \textit{also} restarts IPSec child SAs.
+                    \item Restarting IKEv1 Phase 1 will not restart IPSec SAs.
+                \end{itemize}
+        \end{itemize}
+\end{itemize}
+
+\subsection{IPSec Troubleshooting}
+\subsubsection{VPN Error Messages}
+Network $\rightarrow$ IPSec Tunnels
+\begin{itemize}
+    \item Check info:
+        \begin{itemize}
+            \item Tunnel
+            \item IKE
+            \item Show Routes
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{IPSec Tunnel Status - Check Connectivity}
+To view the IPSec Tunnel Status on the Firewall, go to\textit{Network $\rightarrow$ IPSec Tunnels}:
+\begin{itemize}
+    \item \textbf{Tunnel Status:}
+        \begin{itemize}
+            \item Green indicates an IPSec Phase 2 SA tunnel.
+            \item Red indicates that IPSec Phase 2 SA is not available or has expired.
+        \end{itemize}
+     \item \textbf{IKE Gateway Status:}
+        \begin{itemize}
+            \item Green indicates a valid IKE Phase 1 SA or IKEv2 IKE SA
+            \item Red indicates that IKE Phase 1 SA is not available or has expired
+        \end{itemize}
+    \item \textbf{Tunnel Interface Status:}
+        \begin{itemize}
+            \item Green indicates that the tunnel interface is up (because tunnel monitor is disabled or because tunnel monitor is UP and the monitoring IP address is reachable).
+            \item Red indicates that the tunnel interface is down because the tunnel monitor is enabled and the remote tunnel monitoring IP address is unreachable.
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{IPSec Tunnel Status - Check Connectivity (Cont.)}
+Click \textit{Tunnel Info} to see the details of the tunnel. Network $\rightarrow$ IPSec Tunnels
+
+\subsubsection{VPN Error Messages}
+Remember always to troubleshoot IPSec VPN issues from the responder. The initiator does not receive detailed error messages.
+This behavior is by design and is not linked to any particular vendor's implementation.
+The more common configuration issues include:
+\begin{itemize}
+    \item \textbf{Wrong IP:} The remote gateway IP address is wrong or there is no IP connectivity between the two public interfaces.
+    \item \textbf{No matching P1 or P2 proposal:} The peers cannot find matches for the five parameters of the IKE Phase 1 or Phase 2 proposals.
+    \item \textbf{Mismatched peer ID:} The value entered for peer IDs does not match.
+    \item \textbf{PFS group mismatch:} Both sides have PFS enabled but with different DH groups.
+    \item \textbf{Mismatched proxy ID}: The values for local and remote proxy ID are not correct. This error most commonly happens during interoperation with policy-based VPNs.
+\end{itemize}
+
+\subsubsection{Reading VPN Error Messages (System Log)}
+The error messages for peer and proxy ID mismatches contain the information sent by the initiating peer. 
+This information can be compared to the local configuration to determine where the error is:
+\begin{itemize}
+    \item \textbf{Phase 1 gateways:} The error messages refers to the IKE gateway object and show the peer ID sent by the initiator. 
+    \item \textbf{Phase 2 proxy ID:} The error message shows the local and remote proxy IDs sent by the initiator.
+\end{itemize}

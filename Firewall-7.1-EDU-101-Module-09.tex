@@ -1,0 +1,476 @@
+\section{Basic-User-ID}
+\subsection{User-ID Overview}
+\subsubsection{Introduction}
+The ultimate goal of User-ID is to allow the ability to write policy and view logs with information about users and applications instead of using IP addresses and ports
+\begin{itemize}
+    \item Identify the user by username and user group instead of by IP address
+    \item Create policies and reports based on users and groups
+\end{itemize}
+
+\subsubsection{Where is User-ID Used?}
+\begin{itemize}
+    \item Within the logs and reports:
+        \begin{itemize}
+            \item Sort and filter logs by user/groups
+            \item Monitor $\rightarrow$ Traffic
+        \end{itemize}
+    \item Within the Security policy:
+        \begin{itemize}
+            \item Control application use by group and user
+            \item Separate unknown user traffic from known user traffic
+            \item Policies $\rightarrow$ Security
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{User-Base Policies}
+\begin{itemize}
+    \item Policies can be applied to users and groups regardless of the IP address
+    \item User policies:
+        \begin{itemize}
+            \item Security
+            \item QoS
+            \item Policy Based Forwarding
+            \item Decryption
+            \item DoS protection
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Group and User Mapping}
+Group $\leftrightarrow$ Username $\leftrightarrow$ IP Address
+\begin{itemize}
+    \item Group mapping:
+        \begin{itemize}
+            \item Gather a list of all available users and their groups from the LDAP Server
+        \end{itemize}
+    \item User mapping:
+        \begin{itemize}
+            \item Map the IP address of a traffic to a username using a User-ID agent and other mechanisms.
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Group Mapping}
+\begin{itemize}
+    \item The Palo Alto Networks firewall must retrieve the list of groups and users from the directory server:
+        \begin{itemize}
+            \item Find specific users
+            \item Find groups and group membership
+            \item Maintain user-to-group mapping
+        \end{itemize}
+    \item Many LDAP directory servers are supported:
+        \begin{itemize}
+            \item Microsoft Active Directory (AD)
+            \item Novell eDirectory
+            \item Sun ONE Directory Server
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{User-ID Methods}
+A combination of methods is used to find user and group information and to map those users to session source IP address(es):
+\begin{itemize}
+    \item \textbf{Server monitoring}: User-ID agent monitors Exchange Servers, domain controllers, or Novell eDirectory servers.
+    \item \textbf{Client probing}: User-ID agent probes Windows clients using Windows Management Instrumentation (WMI)
+    \item \textbf{Syslog}: User-ID agent listens for auth syslog messages from network access control systems, wireless controllers, 802.1x devices, Apple Open Directory servers, and proxy servers
+    \item \textbf{Terminal Services agent}: Port mapping for Windows/Citrix terminal servers
+    \item \textbf{Captive Portal}:
+        \begin{itemize}
+            \item If User-Agent can't be used
+            \item Web traffic authenticated using NTLM or AAA form
+        \end{itemize}
+    \item \textbf{GlobalProtect}: Login credentials for client VPN
+    \item \textbf{User-ID XML API:}
+        \begin{itemize}
+            \item When other methods can't be used
+            \item Captures login events and sends them to the User-ID agent or to the firewall
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{User Mapping with User-ID Agent}
+\begin{itemize}
+    \item Exchange servers, domain controllers, or eDirectory servers
+        \begin{itemize}
+            \item User-ID agent: server monitoring
+        \end{itemize}
+    \item Windows clients that can be probed
+        \begin{itemize}
+            \item User-ID agent: client probing
+        \end{itemize}
+    \item Other NAC mechanisms such as wireless controllers, 802.1x devices, Apple Open Directory servers, or proxy servers.
+        \begin{itemize}
+            \item User-ID agent: syslog monitoring XMLAPI
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{User-ID Agent Identification Methods}
+\begin{itemize}
+    \item Server monitoring:
+        \begin{itemize}
+            \item Domain controller logs each authenticated user:
+                \begin{itemize}
+                    \item Microsoft ActiveDirectory
+                    \item OpenLDAP
+                    \item Novell eDirectory
+                \end{itemize}
+            \item Shared session monitoring
+            \item Exchange: Client access server
+        \end{itemize}
+    \item WMI Probe:
+        \begin{itemize}
+            \item Probe the client machine's locally maintained login information
+        \end{itemize}
+    \item Syslog monitoring:
+        \begin{itemize}
+            \item Listen for authentication syslog messages from network services
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{User-ID Agent Types}
+Device $\rightarrow$User Identification
+The User-ID agent comes in two forms: standalone software agent and PAN-OS agent resident on the firewall
+\begin{itemize}
+    \item The firewall-based agent is included with PAN-OS software and can be configured from \textit{Device $\rightarrow$ User Identification $\rightarrow$ User Mapping}
+    \item The software agent is available for download from Palo Alto Networks and can be installed on one or more Windows PCs on the network to obtain user-specific information
+    \item A firewall can communicate with both types of agents at the same time.
+    \item The PAN-OS agent monitors up to 100 domain controllers for small and midsize deployments such as small remote offices or lab environments
+    \item The firewall-based agent also is required for User-ID redistribution
+    \item A software agent can monitor up to 100 domain controllers and/or Exchange Servers. Multiple software agents can be deployed to handle larger environments or multiforest domains.
+\end{itemize}
+
+\subsubsection{Firewall Agent vs Windows Agent}
+\begin{itemize}
+    \item PAN-OS agent
+        \begin{itemize}
+            \item Good for smaller LDAP scenarios
+            \item Polls the LDAP server's security log and only pulls the event ID's related to user and IP info.
+            \item Uses very little bandwidth
+        \end{itemize}
+    \item Windows User-ID agent
+        \begin{itemize}
+            \item Pull ful security log
+            \item Quite bandwidth intensive
+            \item Try to keep the Windows User-ID agent as close to its monitored servers as possible
+            \item This allows the Windows computer to do all of the intensive processing
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{User-ID Agent Server Monitoring}
+The process by which users are identified is:
+\begin{itemize}
+    \item The firewall enumerate users and groups (through LDAP)
+    \item User-ID agent reads the access logs and maps users to IP addresses
+    \item User-ID agent updates information on the firewall
+\end{itemize}
+
+\subsubsection{AD Security Logs}
+One method the User-ID agent uses to map users to IP addresses is to read this Security log and to record the IP address that each user logged in from:
+\begin{itemize}
+    \item When the User-ID agent first starts up, it will parse the entire log and record all of the user login events.
+    \item Afterward, it will check the log constantly to trap new login events.
+    \item These mappings are kept for an amount of time equal to the timeout value set in the User-ID agent interface.
+\end{itemize}
+
+\subsubsection{Shared Server Session Monitoring}
+An additional server-based method to resolve usernames to IP addresses is to consult the current session table on the domain controller:
+\begin{itemize}
+    \item Users that are connected to resources on the domain controller (e.g., shared folders and printers) have their IP addresses and username stored in the server session table.
+    \item The User-ID agent is able to read this table and use it to maintain user-to-IP mappings
+    \item The agent will require server operator privileges to read the session table
+\end{itemize}
+Monitor open server sessions:
+\begin{itemize}
+    \item Clients who have connected to a shared resource will have their session information stored on the server.
+    \item The User-ID agent reads this session table to maintain any known user-to-IP-address mappings.
+\end{itemize}
+
+\subsubsection{Exchange CAS Security Logs}
+For situations where the users are not signing onto LDAP, User-ID can identify users when they access their email on a Microsoft Exchange Server:
+\begin{itemize}
+    \item Exchange Server 2007 and 2010 have five roles that can be distributed to one or more Exchange Servers. User-ID requires the client access server (CAS) role.
+    \item In Exchange Server 2005, the mailbox/backend server role is required.
+    \item The agent maps all users accessing the Exchange Servers, including users accessing their Microsoft Exchange Mailbox through MSRPC or Active Sync
+    \item IMAP/POP3 clients are not supported due to limitation in Exchange Event logging.
+\end{itemize}
+
+\subsubsection{WMI Client Probing}
+\begin{itemize}
+    \item The agent switches to active methods if passive methods fail to identify the user
+    \item WMI queries can be sent to workstations with WMI enabled to find users.
+\end{itemize}
+
+\subsubsection{Syslog Integration}
+Syslog filters, which are provided by a content updated (integrated User-ID agent) or configured manually, allow the User-ID agaent to parse and exctract usernames and IP addresses from authentication syslog events generated by the external service, and add the information to the User-ID IP address-to-username mappings maintained by the firewall
+
+\subsubsection{X-Forwarded-For for User-ID}
+\begin{itemize}
+    \item The source IP of the packets can be IP address of the proxy when users are behind a proxy
+    \item If the proxy server puts the client IP address in HTTP heard X-Forwarded-For, the Palo Alto Networks firewall can extract the client IP address and use it for User-ID
+    \item Enable in \textit{Device $\rightarrow$ Setup $\rightarrow$ Client-ID $\rightarrow$ X-Forwarded-For Headers}
+\end{itemize}
+
+\subsection{Configuring User-ID}
+\subsubsection{Configuring User-ID}
+\begin{itemize}
+    \item Enable User-ID by zone
+    \item Map users to groups:
+        \begin{itemize}
+            \item Create an LDAP Server profile
+            \item Add the LDAP Server profile to the User-ID group mapping configuration
+            \item Limit which groups are displayed within the Security policy.
+        \end{itemize}
+    \item Configure IP address-to-user mapping using User-ID agent and/or other methods, depending on your network.
+\end{itemize}
+
+\subsubsection{Enable User-ID by Zone}
+\begin{itemize}
+    \item The firewall needs to enable User-ID on a per-zone basis
+    \item Each zone has an Enable User Identification check box that must be checked to activate the feature.
+    \item When User-ID is active, zone-specific lists of allowed and ignored IP addresses can be configured. By default, User-ID is applied to all addresses that originate in that zone.
+    \item User-ID tracks only users in the source zone of a session. Never enable User-ID for a zone that contains the Internet, or your firewall will attempt to identify every user in the outside world.
+\end{itemize}
+
+\subsection{Mapping Users to Groups}
+\subsubsection{User-ID and AD Domains}
+The firewall performs all of the LDAP connections:
+\begin{itemize}
+    \item Users and groups names are stored on the firewall in the format of domain\textbackslash name
+    \item The firewall can be configured for either a single AD domain or a multidomain AD forest
+    \item Each User-ID agent can monitor only users and domain controllers from a single AD domain
+    \item The firewall also can communicate to one or more firewalls in one or more domains.
+    \item Each forest must have at least one User-ID agent.
+    \item If multiple agents are deployed, they all must be able to communicate to the same firewall.
+\end{itemize}
+
+\subsubsection{LDAP Server Profile}
+A \textit{Server Profile} object is needed to specify which directory servers will be contacted and the order in which they are contacted.
+The Base DN field represents the point in the LDAP tree that the firewall will connect to and begin the search for users and groups.
+The Bind DN field contains the username credentials that the firewall uses to connect to the LDAP server. Either fully qualified LDAP name or a user principal name.
+For the firewall to access a Global Catalog server the LDAP bind must be set to port TCP 3268 or over SSL connection with LDAP serve use port 636.
+If you have difficulties identifying your directory base DN, follow these steps:
+\begin{itemize}
+    \item Open the AD Users and Groups management console on the domain controller.
+    \item Select Advanced features in the View menu of the management console.
+    \item Select the top domain object and select Properties
+    \item Navigate to the Attribute Editor in the properties window and scroll to the distinguished name attribute.
+    \item Copy the content of this attribute into the LDAP server configuration Base field in the firewall WebUI.
+\end{itemize}
+
+\subsubsection{Create User-ID Group Mapping Filter}
+Before a Security policy can be written for groups of users, the relationships between the users and their groups must be established. 
+This information is retrieved from an LDAP directory, such as Active Directory or eDirectory:
+\begin{itemize}
+   \item The firewall or an agent accesses the directory and search for group objects.
+    \item Each group object contains a list of user objects that are members
+    \item This list is evaluated and becomes the list of users and groups available in the Security Policy and authentication profiles
+    \item The only method to retrieve this data is through LDAP queries from the firewall
+\end{itemize}
+
+\subsubsection{Filtering Group Sent to Firewall}
+Device $\rightarrow$ User Identification $\rightarrow$ Group Mapping Settings
+\newline The \textit{Group Include List} can be used to filter which groups from the LDAP servers are displayed in the Firewall Policy interface.
+
+\subsubsection{show user group-mapping state all Command}
+To see if everything is working properly with the group mappings, you can issue the CLI command:
+\begin{verbatim}
+> show user group-mapping state all    
+\end{verbatim}
+to see all the User and Group information that was retrieved from the LDAP servers.
+This is the recommended method of verifying your LDAP configuration.
+
+\subsubsection{Custom Groups Based on LDAP Filters}
+Device $\rightarrow$ User Identification $\rightarrow$ Group Mapping Settings
+\newline
+Definition of custom groups can be quicker than creating new groups or changing existing ones on an LDAP server, and doesn't require an LDAP administrator to intervene.
+
+\subsection{Mapping Users to IP Addresses with User-ID Agent}
+\subsubsection{User-ID Agent Types}
+Remember that there are two different User-ID agent types;
+\begin{itemize}
+    \item One that lives natively in the firewall
+    \item The Windows User-ID agent that is deployed outside of the firewall and can be loaded on any windows system
+\end{itemize}
+
+\subsubsection{Configuring PAN-OS Integrated User-ID Agent}
+\begin{enumerate}
+    \item Create a user on the domain controller with the required permissions.
+        \begin{itemize}
+            \item Windows 2003 domain servers:
+                \begin{itemize}
+                    \item GPO Policy: Manage Auditing and Security Logs
+                \end{itemize}
+            \item Windows 2008 or newer:
+                \begin{itemize}
+                    \item Event Log Readers group
+                    \item Distributed COM Users group
+                \end{itemize}
+            \item WMI probing:
+                \begin{itemize}
+                    \item Domain administrator and server operator or any other account that has the CIMV2 namespace.
+                \end{itemize}
+        \end{itemize}
+    \item Enter the credentials for the domain controller account
+    \item Define the address of the domain controller to be monitored
+    \item Configure WMI probing (optional)
+    \item Enable NetBIOS probing (optional)
+\end{enumerate}
+
+\subsubsection{Define the Monitored Domain Controller}
+Each User-ID agent must be configured for the servers it needs to monitor.
+The agent includes an \textit{autodiscovery} feature that automatically identifies available Microsoft Windows Servers via DNS for event log monitoring
+The firewall will discover domain controllers based on the domain name enter in the Domain field of the 
+\textit{Device $\rightarrow$ Setup $\rightarrow$ Management tab $\rightarrow$ General Settings}
+
+\subsubsection{Enter WMI Credentials}
+The \textit{WMI Authentication} tab must contain the user account information used to access the LDAP server logs and WMI probing.
+
+\subsubsection{Enable WMI/NETBios Probing}
+Make sure that the Windows client firewall will allow WMI probing:
+\begin{itemize}
+    \item Add a remote admin exception to the firewall
+    \item Allow port 139
+    \item Enable file and printer sharing
+\end{itemize}
+
+\subsubsection{Status: Connected}
+Once the setup is complete and committed to the firewall configuration, the user mapping tab will show the connection status for all servers that the User-ID agent is monitoring.
+
+\subsubsection{Configuring the User-ID Agent Introduction}
+\begin{enumerate}
+    \item Download User-ID agent software
+    \item Select a Windows PC for the installation
+    \item Run the User-ID agent installer
+    \item Configure a Windows service account for the User-ID agent:
+        \begin{enumerate}
+            \item Give local permission to log in as a service.
+            \item Give local permission to access the User-ID agent installation directory.
+            \item Assign the service account rights to the User-ID agent registry subtree.
+        \end{enumerate}
+    \item Configure the software User-ID agent.
+    \item Configure the Palo Alto Networks firewall to connect to the User-ID agent.
+\end{enumerate}
+
+\subsubsection{Download User-ID Agent Software}
+The User-ID Agent software can be downloaded from \href{support.paloaltonetworks.com}{support.paloaltonetworks.com}
+under software updates. 
+The software has to be installed as a user with admin access to the computer that you are installing the agent on.
+
+\subsubsection{Select a Windows Device for the Installation}
+\begin{itemize}
+    \item Install on the domain controller
+    \item Or install on any Windows machine with access to the domain controller (or Exchange Server) and PAN-OS firewall:
+        \begin{itemize}
+            \item Microsoft Windows XP SP3 or later
+            \item 32-bit and 64-bit are both supported
+            \item Install the User-ID agent close to the server it will be monitoring to opimized bandwidth usage.
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Windows Service Account for the User-ID Agent}
+\begin{itemize}
+    \item Create a Windows service account to be used by the User-ID agent on the domain controller.
+    \item Give the account local permission to the service.
+    \item Give the account local permission to the User-ID agent installation directory.
+    \item Assign the account rights to the User-ID agent registry subtree
+\end{itemize}
+
+\subsubsection{Configure the User-ID Agent}
+The software agent also includes an \textit{autodiscovery} feature to find Microsoft Windows servers.
+Access to the servers must be configured in the Authorization tab before information can be gathered from these sources.
+
+\subsubsection{Windows Probing Config}
+Log reading is a passive method of user mapping and \textit{probing} is an active method:
+\begin{itemize}
+    \item The User-ID agent sends a probe on a configurable interval to each learned IP address in its list to verify that the same user is still logged in.
+    \item The results of the probe are used to update the record on the agent and then are passed on to the firewall.
+    \item Each learned IP is probed once per interval period.
+    \item WMI probing must be enabled on the client machines for the probe to be successful.
+\end{itemize}
+Ensure that large environment have a long enough intervall for all IPs to be probed.
+For example, in a network with 6,000 users and an interval of 10 minutes, that would require 10 WMI requests per second from each agent.
+
+\subsubsection{Configure the Firewall to Connect to the User-ID Agent}
+The firewall must be configured with information for every User-ID agent it will connect to:
+\begin{itemize}
+    \item Each agent's IP address and listening port must be specified.
+    \item The firewall can connect to multiple agents, including agents on other firewalls.
+    \item The communication between the firewall and the User-ID agent is transmitted over an encrypted SSL connection.
+\end{itemize}
+The firewall has specific, nonconfigurable timers for its communication to the agent:
+\begin{itemize}
+    \item \textbf{2 seconds}: Get the list of new IP address-to user mapping from the agent.
+    This list is a delta of new mappings only.
+    \item \textbf{2 seconds}: Send the list of unknown IP addresses that were encountered in traffic to the agent.
+    \item \textbf{5 seconds}: Get the agent status. This is a heartbeat used to determine the status of each configured agent.
+    \item \textbf{1 hour}: Get the full list of IP address-to-user mappings from the agent.
+\end{itemize}
+
+\subsubsection{Confirm Connection to the User-ID Agent}
+Device $\rightarrow$ User Identification $\rightarrow$ User-ID Agents
+\newline The connection can be confirmed within the system logs and the User-ID Agents tab of the firewall.
+
+\subsubsection{Confirm Connection to the User-ID Agent (Cont.)}
+This information can also be viewed via the CLI using the command:
+\begin{verbatim}
+> show user user-id-agent state <DomainAccountName>
+\end{verbatim}
+
+\subsubsection{Display User-ID Mappings}
+A view of how users and IP addresses are being mapped on the firewall can be helpful.
+This information is available only from the CLI.
+\begin{itemize}
+    \item \begin{verbatim}
+        > show user user-id-agent statistics
+    \end{verbatim}
+    \item \begin{verbatim}
+        > show user user-IDs
+    \end{verbatim}
+    \item \begin{verbatim}
+        > show user ip-user-mapping all
+    \end{verbatim}
+    \item \begin{verbatim}
+        > show user ip-user-mapping <ip/netmask>
+    \end{verbatim}
+\end{itemize}
+
+\subsubsection{Selecting Users and Groups for a Security Policy}
+When you use a user or group in a policy, remember that the source address field and the source user field are evaluated with a logical and condition. 
+When you select users for a Security policy, these options are available:
+\begin{itemize}
+    \item \textbf{any}: Matches any value for user
+    \item \textbf{pre-logon}: Used with certain GlobalProtect implementations
+    \item \textbf{unknown}: Matches traffic where the user could not be identified by User-ID methods
+    \item \textbf{select}: Matches a specific user or group identified by User-ID.
+\end{itemize}
+
+\subsection{Mapping Users to IP Addresses with Syslog Integration}
+\subsubsection{Syslog Integration Overview}
+The Microsoft Windows agent and the built-in PAN-OS agent can listen for authentication syslog messages:
+\begin{itemize}
+    \item These message are from devices to which users must authenticate such as proxy servers, wireless controllers, and NAC switches.
+    \item Syslog filters are used to parse and extract usernames and IP addresses from those syslog messages.
+    \item The firewall User-ID agent adds this information to the list of user-to IP-address mappings it maintains.
+\end{itemize}
+\subsubsection{Configuring Syslog Integration: PAN-OS Software}
+Up to 50 syslog senders per virtual system, and up to a total of 100 monitored servers, can be configured per firewall.
+The admin selects Syslog Sender from the Type drop-down list.
+There are user-defined filters and predefined filters:
+\begin{itemize}
+    \item The user-defined filter types are defined under \textit{Device $\rightarrow$ User Identification $\rightarrow$ User Mapping $\rightarrow$ Palo Alto Networks User ID Agent Setup $\rightarrow$ Syslog Filters}
+    \item Regex Identifier and Field Identifier are the types of user-defined filters that can be configured:
+        \begin{itemize}
+            \item For Regex Identifier, the admin specifies a regular expression used for pattern matching to identify and extract user-to-IP address information.
+            \item Field Identifier parsing uses an admin-defined string to match an authentication event, along with prefix and suffix strings used to identify user mapping information in the syslog messages.
+        \end{itemize}
+\end{itemize}
+
+\subsubsection{Configuring Syslog Integration: User-ID Agent}
+\begin{enumerate}
+    \item Open the User-ID agent to configure syslog integration.
+    \item Configure the port number to be used:
+        \begin{itemize}
+            \item 514 for UDP
+            \item 6514 for SSL
+        \end{itemize}
+    \item On the Syslog tab, select the \textit{Enable Syslog Service} check box to enable this option through the User-ID agent.
+    \item Add either a Regex Identifier or Field Identifier, then click \textit{OK}
+    \item The agent needs to be added in PAN-OS software if this addition has not already been done.
+    Add the User-ID agent via \textit{Device $\rightarrow$ User Identification $\rightarrow$ User-ID Agents}
+\end{enumerate}
